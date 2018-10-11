@@ -8,3 +8,4 @@ Jekyll Page Repo
  * Category pages and links
  * Redesign
  * Add better category handling
+ * Write about page
