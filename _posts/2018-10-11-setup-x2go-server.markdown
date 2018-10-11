@@ -68,4 +68,6 @@ sudo apt update && sudo apt install -y x2goclient
 Once this is installed, run `x2goclient` from your terminal, or find it in your applications menu. From
 here, you can then set up a connection to a host.
 
-TODO: Add additional setup steps for the client.
+Want more information about setting up the client? Look at 
+the [full client install guide]({{ site.baseurl }}{% link _posts/2018-10-11-setup-x2go-client.markdown %})
+
