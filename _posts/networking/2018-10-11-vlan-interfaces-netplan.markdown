@@ -9,6 +9,7 @@ tags:
  - netplan
  - vlans
  - ubuntu-18-04
+published: false
 ---
 
 ## VLAN Interfaces
