@@ -92,8 +92,8 @@ RAID-Z2 and 1, but is also highly resilient - you can loose up to 3 disks from t
 
 **Disk** - not suitable for production
 
-A *disk* vdev is a single disk. The most basic type of vdev is a standard block device. This can be an entire disk (such as /dev/sda)
-or a partition (/dev/sda1). This is not suitable for production because the loss of that single disk will cause the pool to fail.
+A *disk* vdev is a single disk. The most basic type of vdev is a standard block device. This can be an entire disk (such as `/dev/sda`)
+or a partition (`/dev/sda1`). This is not suitable for production because the loss of that single disk will cause the pool to fail.
 
 However, a disk vdev can be upgraded to a mirror by attaching a second disk of equal or larger size.
 
@@ -205,11 +205,11 @@ device found at `/dev/sde` on the system.
 
 In this case, we are setting up 5x vdevs, each a mirror of two drives:
 
- * mirror 1 (3.0t): sdb, sdc
- * mirror 2 (3.0t): sdd, sde
- * mirror 3 (0.5t): sdf, sdg
- * mirror 4 (0.5t): sdh, sdi
- * mirror 5 (0.5t): sdj, sdk
+ * mirror 1 (3.0t): `sdb`, `sdc`
+ * mirror 2 (3.0t): `sdd`, `sde`
+ * mirror 3 (0.5t): `sdf`, `sdg`
+ * mirror 4 (0.5t): `sdh`, `sdi`
+ * mirror 5 (0.5t): `sdj`, `sdk`
 
 These mirrors are added as high-level devices in the pool we will call `tank` for a total usable space of
 about 7.5T.
