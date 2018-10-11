@@ -17,3 +17,7 @@ markdown: kramdown
 permalink: /:category/:title:output_ext
 
 theme: jekyll-theme-slate
+
+# TODO: Implement this
+# https://stackoverflow.com/questions/17118551/generating-a-list-of-pages-not-posts-in-a-given-category
+# category-list: [ZFS, KVM]
