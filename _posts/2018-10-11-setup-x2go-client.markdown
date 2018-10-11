@@ -69,7 +69,8 @@ whatever is done on this view will also be visible to the system's monitors / VM
 
 Finally, you can use "Single application" to run an X2Go session with just a single application, instead
 of an entire remote window. This can be useful when you only ever need to run a remote application. If
-this option is used, you must also specify the full path to the application.
+this option is used, you must also specify the full path to the application. This does not always work well
+on Windows (at least Windows 7 where I have tested it).
 
 ## Connecting
 
