@@ -1,9 +1,10 @@
 ---
 layout: post
 title:  "VLan Trunking with Netplan"
-slug:   netplan-vlan0trunk
+slug:   netplan-vlan-trunk
 date:   2018-10-10 15:47:28
 categories: Networking
+visible: 0
 tags: 
  - networking
  - netplan
