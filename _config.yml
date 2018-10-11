@@ -14,7 +14,8 @@ github_username:  benyanke
 # Build settings
 markdown: kramdown
 # permalink: /:year/:title:output_ext
-permalink: /:categories/:title:output_ext
+# permalink: /:categories/:title:output_ext
+permalink: /:categories/:slug:output_ext
 
 theme: jekyll-theme-slate
 
