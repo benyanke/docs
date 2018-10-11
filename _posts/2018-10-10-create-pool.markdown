@@ -54,7 +54,7 @@ sudo zpool status
 This should return `no pools available`, which confirms that ZFS is installed,
 and no pool is set up.
 
-## Find Yor Disks
+## Find Yuor Disks
 
 Find all your block devices with `lsblk` (LiSt BLocK devices)
 
@@ -67,8 +67,8 @@ Output will look like:
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
 loop0    7:0    0  86.9M  1 loop /snap/core/4917
 sda      8:0    0 136.1G  0 disk 
-â”œâ”€sda1   8:1    0   512M  0 part /boot/efi
-â””â”€sda2   8:2    0 135.6G  0 part /
+  sda1   8:1    0   512M  0 part /boot/efi
+  sda2   8:2    0 135.6G  0 part /
 sdb      8:16   0   2.7T  0 disk 
 sdc      8:32   0   2.7T  0 disk 
 sdd      8:48   0   2.7T  0 disk 
