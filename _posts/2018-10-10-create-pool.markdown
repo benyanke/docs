@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Create ZFS Pool"
+slug:   create-pool
 date:   2018-10-10 12:58:29
 categories: ZFS
 tags: 
