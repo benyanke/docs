@@ -173,7 +173,7 @@ sudo zpool status
 This should return `no pools available`, which confirms that ZFS is installed,
 and no pool is set up.
 
-## Find Yuor Disks
+## Find Your Disks
 
 Find all your block devices with `lsblk` (LiSt BLocK devices)
 
