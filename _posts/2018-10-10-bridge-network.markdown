@@ -2,7 +2,7 @@
 layout: post
 title:  "Create Host Bridge Network"
 date:   2018-10-10 12:58:29
-category: KVM
+categories: KVM
 tags: 
  - kvm
  - qemu
