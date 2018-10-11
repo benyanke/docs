@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  "Setup X2Go Server"
-slug:   x2go-server
+slug:   setup-server
 date:   2018-10-10 12:58:29
-categories: x2go
+categories: X2Go
 tags: 
  - x2go
  - remote-access
