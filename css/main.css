@@ -119,7 +119,8 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 @media screen and (max-width: 800px) { .post-content h4 { font-size: 18px; } }
 
 /** Syntax highlighting styles */
-.highlight { background: #fff; }
+/* Removed manually to make appearance better of code */
+/* .highlight { background: #fff; } */
 .highlight .c { color: #998; font-style: italic; }
 .highlight .err { color: #a61717; background-color: #e3d2d2; }
 .highlight .k { font-weight: bold; }
