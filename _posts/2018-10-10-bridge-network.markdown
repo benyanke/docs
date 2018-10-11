@@ -7,7 +7,6 @@ tags:
  - kvm
  - qemu
  - virtual machine
- - qemu
 ---
 
 
