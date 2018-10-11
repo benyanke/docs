@@ -1,4 +1,10 @@
-example
+Jekyll Page Repo
 =======
 
-Jekyll example Project site
+
+## Things to Setup
+
+ * Tags pages and links: http://longqian.me/2017/02/09/github-jekyll-tag/
+ * Category pages and links
+ * Redesign
+ * Add better category handling
