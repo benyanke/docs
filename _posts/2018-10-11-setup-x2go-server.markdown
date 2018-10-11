@@ -46,6 +46,10 @@ sudo apt install -y x2gomatebindings
 sudo apt install -y x2golxdebindings
 ```
 
+Note that X2Go server does not work well with Unity or Gnome. Mate is generally the easiest desktop
+environment to use, because it is simple, lightweight, and well supported by x2go. KDE is also
+fairly usable.
+
 ## Client Installation
 
 X2Go has two main clients available, the main client simply called `x2goclient`, as well as a lighter
