@@ -92,8 +92,8 @@ In this case, we are setting up 5x vdevs, each a mirror of two drives:
  * mirror 4 (0.5t): sdh, sdi
  * mirror 5 (0.5t): sdj, sdk
 
-These mirrors are added as high-level devices in the pool we will call `tank`.
-
+These mirrors are added as high-level devices in the pool we will call `tank` for a total usable space of
+about 7.5T.
 
 ## Pool Setup Basics
 With the pool layout and device names found above, we create the pool.
@@ -104,7 +104,8 @@ The command syntax is as follows:
  * `create` : create a new pool
  * `[name of pool]` : a string value naming the pool. Tank is often a default value used.
  * vdev definition block (repeat once per vdev in your pool
-   * `[type of vdev]` : in our case, we're using mirror. Could also be `RAIDZ` (raid5), `RAIDZ2` (raid 6), or `RAIDZ3` (raid7), or some other values.
+   * `[type of vdev]` : in our case, we're using mirror. Could also be `RAIDZ` (raid5), `RAIDZ2` (raid 6), or `RAIDZ3` 
+      (raid7), or some other values.
    * `device names in vdev`
 
 Since this may not be clear, here are a few examples of commands and their output:
