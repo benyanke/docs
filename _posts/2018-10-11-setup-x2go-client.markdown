@@ -12,7 +12,7 @@ tags:
  - windows
 ---
 
-[server install guide]({{ site.baseurl }}{% post_url 2018-10-11-setup-x2go-server %})
+Related: _[Server install guide]({{ site.baseurl }}{% post_url 2018-10-11-setup-x2go-server %})_
 
 ## Windows Client
 
