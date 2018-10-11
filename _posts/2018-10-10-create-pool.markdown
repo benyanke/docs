@@ -29,7 +29,7 @@ ZFS provides a number of features, including:
 
 ## Important Terms and Concepts
 
-_Based on https://www.freebsd.org/doc/handbook/zfs-term.html_
+_Based on a guide from the [FreeBSD handbook](https://www.freebsd.org/doc/handbook/zfs-term.html)_
 
 ZFS has a number of important terms and concepts to be aware of.
 
