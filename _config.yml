@@ -11,6 +11,9 @@ url: "http://docs.yanke.io" # the base hostname & protocol for your site
 # twitter_username: jekyllrb
 github_username:  benyanke
 
+# Repository link
+repository: "https://github.com/benyanke/docs/"
+
 # Build settings
 markdown: kramdown
 # permalink: /:year/:title:output_ext
