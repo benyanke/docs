@@ -7,7 +7,7 @@ description: > # this means to ignore newlines until "baseurl:"
   and work. It's primarily for my own use, but I hope it can be of 
   assistance to others.
 baseurl: "/" # the subpath of your site, e.g. /blog/
-url: "//docs.yanke.io" # the base hostname & protocol for your site
+url: "https://docs.yanke.io" # the base hostname & protocol for your site
 # twitter_username: jekyllrb
 github_username:  benyanke
 
