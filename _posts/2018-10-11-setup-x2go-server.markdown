@@ -44,6 +44,9 @@ sudo apt install -y x2gomatebindings
 
 # LXDE
 sudo apt install -y x2golxdebindings
+
+# Plasma / KDE
+sudo apt install -y plasma-widget-x2go
 ```
 
 Note that X2Go server does not work well with Unity or Gnome. Mate is generally the easiest desktop
