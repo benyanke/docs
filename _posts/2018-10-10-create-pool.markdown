@@ -116,8 +116,8 @@ zpool create tank mirror c1d0 c2d0 mirror c3d0 c4d0
 ```
 
 Create a pool called `tank`, with two vdevs. First vdev is a mirror 
-with devices /dev/c1d0 and /dev/c2d0, second vdev is a mirror 
-with devices /dev/c3d0 /dev/c4d0.
+with devices `/dev/c1d0` and `/dev/c2d0`, second vdev is a mirror 
+with devices `/dev/c3d0` and `/dev/c4d0`.
 
 
 
@@ -126,7 +126,7 @@ zpool create tank raidz2 sdb sdc sdd sde sdf
 ```
 
 Create a pool called `tank`, with one vdev. vdev is a raidz2 (raid6), 
-consisting of /dev/sdb /dev/sdc /dev/sdd /dev/sde and /dev/sdf.
+consisting of `/dev/sdb` `/dev/sdc` `/dev/sdd` `/dev/sde` and `/dev/sdf`.
 
 
 ## Create Pool
