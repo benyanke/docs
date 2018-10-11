@@ -179,7 +179,7 @@ If you receive no output, it was likely successful. Confirm by running a few com
 view the status of your pool.
 
  * `zpool status` - detailed pool information, including disk health
- * `zfs list` list of all pools and datasets, showing free/used space
+ * `zfs list` - list of all pools and datasets, showing free/used space
  * `df -h` - systemwide disk-space monitor - your pool should now be mounted in the root of 
     the disk at your pool name (ie -  a pool name tank is mounted by default at `/tank`).
 
