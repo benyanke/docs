@@ -78,7 +78,7 @@ capacity, minus one disk for redundancy.
 It is recommended to add no more than nine disks in a single vdev. If the configuration has more disks, it is recommended to divide 
 them into separate vdevs and the pool data will be striped across them.
 
-RAID-Z technically production safe, but not reccomended, because a single disk failure results in the vdev having no redundancy. Use
+RAID-Z technically production safe, but not recommended, because a single disk failure results in the vdev having no redundancy. Use
 RAID-Z2 or 3 if possible.
 
 **RAID-Z2**
