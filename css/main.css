@@ -2,10 +2,10 @@
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
-body { font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5; font-weight: 300; color: #111; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; }
+body { font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5; /* font-weight: 300;*/ color: #111; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; }
 
 /** Added manually to fix bold **/
-strong { font-weight: strong !important; }
+strong { font-weight: strong; }
 
 /** Set `margin-bottom` to maintain vertical rhythm */
 h1, h2, h3, h4, h5, h6, p, blockquote, pre, ul, ol, dl, figure, .highlight { margin-bottom: 15px; }
