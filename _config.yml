@@ -13,3 +13,5 @@ github_username:  jekyll
 # Build settings
 markdown: kramdown
 permalink: /:year/:title:output_ext
+
+theme: jekyll-theme-slate
