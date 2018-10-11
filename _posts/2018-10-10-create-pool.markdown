@@ -27,6 +27,116 @@ ZFS provides a number of features, including:
    Checksums are checked on every FS block read, as well as on a manual scrub, which is typically run about once-per-week, or 
    at least multiple times per month.
 
+## Important Terms and Concepts
+
+_Based on https://www.freebsd.org/doc/handbook/zfs-term.html_
+
+ZFS has a number of important terms and concepts to be aware of.
+
+### Pool
+A storage pool is the most basic building block of ZFS. A pool is made up of one or more vdevs, the underlying devices that store
+the data. A pool is then used to create one or more file systems (datasets) or block devices (volumes). These datasets and volumes
+share the pool of remaining free space. Each pool is uniquely identified by a name and a GUID. The features available are determined
+by the ZFS version number on the pool.
+
+TODO: document pool upgrade procedures
+
+### Vdev
+A pool consists of one or more striped vdevs. To use standard raid terminology, a pool is a RAID-0 of vdevs. As such - it is 
+important that each vdev be fully redundant, because a loss of a vdev will result in the loss of a pool. Redundancy is provided by
+making the vdevs themselves redundant.
+
+In a production system, a vdev must be made up of a redundant set of disks. If a single disk is imported as a vdev, the loss of that 
+single disk will cause the loss of the pool.
+
+However, for testing and development, it may be suitable to use single-disk-vdevs, with the understanding that it is similar to
+a RAID-0 raid volume, in which a single disk will cause the pool to be lost. Additionally, vdevs can not be removed from a pool.
+If a pool needs to be downsized, a new pool needs to be built, then use `zfs send` and `zfs receive` to send the data to the new
+pool.
+
+Below is a list of the types of vdevs:
+
+**Mirror**
+A mirror is a set of disks containing the same data, and can contain two or more disks.
+
+When creating a mirror, specify the mirror keyword followed by the list of member devices for the mirror. While the devices in the
+mirror can be mixed, a mirror vdev will only hold as much data as its smallest member. A mirror vdev can withstand the failure of 
+all but one of its members without losing any data. 
+
+A mirror will write at the speed of it's slowest disk, as all devices need to receive each written block, and will read at a sum 
+of the devices, because any block can be read from any device in the mirror.
+
+A regular single disk vdev can be upgraded to a mirror vdev at any time with `zpool attach`.
+
+**RAID-Z**
+RAID-Z is a software implementation of RAID5 - it performs similarly to standard RAID-5 implementations. The capacity of each disk
+can be mixed, but only the lowest-disk capacity is used across all disks. The capacity of a RAID-Z vdev is the sum of the raw disk
+capacity, minus one disk for redundancy.
+
+It is recommended to add no more than nine disks in a single vdev. If the configuration has more disks, it is recommended to divide 
+them into separate vdevs and the pool data will be striped across them.
+
+RAID-Z technically production safe, but not reccomended, because a single disk failure results in the vdev having no redundancy. Use
+RAID-Z2 or 3 if possible.
+
+**RAID-Z2*
+RAID-Z2 is a software implementation of RAID6. It is similar to RAID-Z, but offers two redundant disks.
+
+**RAID-Z2*
+RAID-Z2 is a software implementation of RAID6. It is similar to RAID-Z, but offers three redundant disks. It will be slower than 
+RAID-Z2 and 1, but is also highly resilient - you can loose up to 3 disks from the vdev safely.
+
+**Disk** - not suitable for production
+A *disk* vdev is a single disk. The most basic type of vdev is a standard block device. This can be an entire disk (such as /dev/sda)
+or a partition (/dev/sda1). This is not suitable for production because the loss of that single disk will cause the pool to fail.
+
+However, a disk vdev can be upgraded to a mirror by attaching a second disk of equal or larger size.
+
+TODO: document the command to upgrade a disk to a mirror.
+
+**File** - not suitable for production
+In addition to disks, ZFS pools can be backed by regular files, this is especially useful for testing and experimentation. Use the
+full path to the file as the device path in zpool create. All vdevs must be at least 128 MB in size.
+
+
+**Spare**
+ZFS has a special pseudo-vdev type for keeping track of available hot spares. Note that installed hot spares are not deployed
+automatically; they must manually be configured to replace the failed device using `zfs replace`.
+
+**Log**
+ZFS Log Devices, also known as ZFS Intent Log (ZIL) move the intent log from the regular pool devices to a dedicated device,
+typically an SSD. Having a dedicated log device can significantly improve the performance of applications with a high volume
+of synchronous writes, especially databases. Log devices can be mirrored, but RAID-Z is not supported. If multiple log
+devices are used, writes will be load balanced across them.
+
+**Cache**
+Adding a cache vdev to a pool will add the storage of the cache to the L2ARC. Cache devices cannot be mirrored. Since a cache
+device only stores additional copies of existing data, there is no risk of data loss. Note that having a large cache device
+can have adverse effects, because files in the cache must be referenced in memory. If the cache is too large, it can reduce 
+the ability to cache data in memory, which will be faster than any cache device.
+
+
+### Others
+
+TODO: Document the following concepts:
+ * pool - done
+ * vdev - done
+ * Copy-on-write
+ * Dataset
+ * Clone
+ * Compression
+ * Deduplication
+ * Scrub
+ * Resilver
+ * Degraded pool
+ * each of the vdev types (mirror, RAIDz, etc)
+ * snapshot
+ * clone
+ * Special devices
+   * ZIL
+   * L2ARC
+ 
+
 ## RAID Card Note
 Ideally, RAID cards should be replaced with JBOD HBA devices, to allow the ZFS to have full control over the drive. However, if 
 this is not possible for whatever reason, setup each individual disk as it's own single-disk RAID 0 volume.
