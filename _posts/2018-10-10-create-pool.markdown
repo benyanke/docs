@@ -103,7 +103,7 @@ The command syntax is as follows:
  * `zpool` : this is the name of the command line tool
  * `create` : create a new pool
  * `[name of pool]` : a string value naming the pool. Tank is often a default value used.
- * vdev definition block (repeat once per vdev in your pool
+ * vdev definition block (repeat once per vdev in your pool)
    * `[type of vdev]` : in our case, we're using mirror. Could also be `RAIDZ` (raid5), `RAIDZ2` (raid 6), or `RAIDZ3` 
       (raid7), or some other values.
    * `device names in vdev`
