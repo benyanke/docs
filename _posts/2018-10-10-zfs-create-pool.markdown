@@ -2,7 +2,7 @@
 layout: post
 title:  "Create ZFS Pool"
 date:   2018-10-10 12:58:29
-categories: zfs
+category: ZFS
 tags: 
  - zfs
  - zfsonlinux
