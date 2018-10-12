@@ -1,0 +1,25 @@
+#!/bin/bash
+
+testfile="/tank/tmp/testfile"
+
+ls "$testfile" &> /dev/null && exit 1
+
+echo ""
+echo "Testing writes"
+echo ""
+dd if=/dev/urandom of="$testfile" bs=100M count=20 iflag=fullblock
+echo ""
+dd count=1k bs=1M if=/dev/urandom of="$testfile"
+
+echo ""
+echo "Testing Reads"
+echo ""
+dd of=/dev/null if="$testfile" bs=100M count=20 iflag=fullblock
+echo ""
+dd count=1k bs=1M of=/dev/null if="$testfile"
+
+rm "$testfile"
+
+
+
+also hdparm
