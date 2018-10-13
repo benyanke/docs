@@ -1,0 +1,15 @@
+[submodule "docs/hugo-alabaster-theme"]
+	path = docs/hugo-alabaster-theme
+	url = https://github.com/digitalcraftsman/hugo-alabaster-theme.git
+[submodule "docs/themes/ananke"]
+	path = docs/themes/ananke
+	url = https://github.com/budparr/gohugo-theme-ananke.git
+[submodule "docs/themes/blackburn"]
+	path = docs/themes/blackburn
+	url = https://github.com/yoshiharuyamashita/blackburn.git
+[submodule "docs/themes/hyde-y"]
+	path = docs/themes/hyde-y
+	url = https://github.com/enten/hyde-y.git
+[submodule "docs/themes/hugo-alabaster-theme"]
+	path = docs/themes/hugo-alabaster-theme
+	url = https://github.com/digitalcraftsman/hugo-alabaster-theme.git
