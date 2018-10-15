@@ -1,0 +1,19 @@
+# TODO: Turn into a post:
+
+# This guide documents the steps to 
+
+
+# Edit XML
+virsh dumpxml name_of_vm > name_of_vm.xml
+
+# Undefine the old vm to prevent an error because of an duplicate UUID.
+virsh undefine name-of-vm
+
+# Edit the xml file then import it.
+virsh define name_of_vm.xml
+
+# Of course you will have to stop and start the vm for the changes to take effect
+virsh destroy name_of_vm
+virsh start name_of_vm
+
+
