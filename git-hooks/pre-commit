@@ -1,0 +1,24 @@
+#!/bin/bash
+
+echo ""
+echo ""
+echo "Jekyll test build before commit"
+echo ""
+echo ""
+
+docker run --rm \
+    --volume="$PWD:/srv/jekyll" \
+    --volume="/tmp/jekyll-bundle-cache:/usr/local/bundle" \
+    jekyll/jekyll:3 \
+    jekyll build
+
+
+if [[ "$?" -ne "0" ]] ; then
+  echo ""
+  echo ""
+  echo "Jekyll build failed - can not continue"
+  echo ""
+  echo ""
+  exit 1
+fi
+
