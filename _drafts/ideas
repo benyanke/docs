@@ -1,0 +1,17 @@
+SSH hardening
+
+ZFS send / receive
+
+
+Guides need to be written for the following KVM topics:
+
+ - Creating a guest on KVM
+ - virtio drivers - research this
+ - virt manager
+ - virsh basics
+ - migrations
+ - editing raw XML
+ - KVM tuning
+ - virt-* tools
+
+
