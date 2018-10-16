@@ -318,7 +318,9 @@ is shared across datasets (unless you apply quotas or reservations to restrict c
 
 Datasets can also be nested, like standard linux filesystems.
 
-Create some datasets like this:
+Create some datasets using the command `zfs create [pool]/[datasetname]`. Note that datasets can
+be nested, but are not created recursively. That is: you can not create `tank/system/homedirs` 
+until you have created `tank/system`.
 
 ```
 sudo zfs create tank/vms
