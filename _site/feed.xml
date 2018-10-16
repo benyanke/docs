@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sysadmin Docs</title>
+    <description>
+This is a set of documentation created during my own personal tasks  and work. It's primarily for my own use, but I hope it can be of  assistance to others.
+</description>
+    <link>http://docs.yanke.io//</link>
+    <atom:link href="http://docs.yanke.io//feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Tue, 16 Oct 2018 10:33:35 -0500</pubDate>
+    <lastBuildDate>Tue, 16 Oct 2018 10:33:35 -0500</lastBuildDate>
+    <generator>Jekyll v3.7.4</generator>
+    
+      <item>
+        <title>Create ZFS Pool</title>
+        <description>&lt;h2 id=&quot;zfs-overview&quot;&gt;ZFS Overview&lt;/h2&gt;
+&lt;p&gt;ZFS (fully called OpenZFS) is a software RAID and volume management tool - it replaces both hardware raid controllers, as well as 
+volume managers, and snapshot tooling. It originated from Sun Microsystems, now Oracle, and is natively supported and developed
+by the FreeBSD team. It was then ported linux under the project “ZFS on Linux”.&lt;/p&gt;
+
+&lt;p&gt;ZFS provides a number of features, including:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Hardware RAID - no more raid cards&lt;/li&gt;
+  &lt;li&gt;Datasets - Allowing one pool to be split into smaller flexible pools with their own replication, properties, and quotas.&lt;/li&gt;
+  &lt;li&gt;Snapshots - Lightweight snapshots can be created, storing only the data that has been changed&lt;/li&gt;
+  &lt;li&gt;ZFS Send / Receive - This allows a pool or dataset snapshot to be sent, on a block-level. This includes incremental sending,
+meaning that only changed data between snapshots must be sent.&lt;/li&gt;
+  &lt;li&gt;Scrub / Metadata Integrity - ZFS checksums all data on disk to ensure no physical corruption can cause issues with the data. 
+Checksums are checked on every FS block read, as well as on a manual scrub, which is typically run about once-per-week, or 
+at least multiple times per month.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;important-terms-and-concepts&quot;&gt;Important Terms and Concepts&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Based on a guide from the &lt;a href=&quot;https://www.freebsd.org/doc/handbook/zfs-term.html&quot;&gt;FreeBSD handbook&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;ZFS has a number of important terms and concepts to be aware of.&lt;/p&gt;
+
+&lt;h3 id=&quot;pool&quot;&gt;Pool&lt;/h3&gt;
+&lt;p&gt;A storage pool is the most basic building block of ZFS. A pool is made up of one or more vdevs, the underlying devices that store
+the data. A pool is then used to create one or more file systems (datasets) or block devices (volumes). These datasets and volumes
+share the pool of remaining free space. Each pool is uniquely identified by a name and a GUID. The features available are determined
+by the ZFS version number on the pool.&lt;/p&gt;
+
+&lt;p&gt;TODO: document pool upgrade procedures&lt;/p&gt;
+
+&lt;h3 id=&quot;vdev&quot;&gt;Vdev&lt;/h3&gt;
+&lt;p&gt;A pool consists of one or more striped vdevs. To use standard raid terminology, a pool is a RAID-0 of vdevs. As such - it is 
+important that each vdev be fully redundant, because a loss of a vdev will result in the loss of a pool. Redundancy is provided by
+making the vdevs themselves redundant.&lt;/p&gt;
+
+&lt;p&gt;In a production system, a vdev must be made up of a redundant set of disks. If a single disk is imported as a vdev, the loss of that 
+single disk will cause the loss of the pool.&lt;/p&gt;
+
+&lt;p&gt;However, for testing and development, it may be suitable to use single-disk-vdevs, with the understanding that it is similar to
+a RAID-0 raid volume, in which a single disk will cause the pool to be lost. Additionally, vdevs can not be removed from a pool.
+If a pool needs to be downsized, a new pool needs to be built, then use &lt;code class=&quot;highlighter-rouge&quot;&gt;zfs send&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;zfs receive&lt;/code&gt; to send the data to the new
+pool.&lt;/p&gt;
+
+&lt;p&gt;Below is a list of the types of vdevs:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Mirror&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A mirror is a set of disks containing the same data, and can contain two or more disks.&lt;/p&gt;
+
+&lt;p&gt;When creating a mirror, specify the mirror keyword followed by the list of member devices for the mirror. While the devices in the
+mirror can be mixed, a mirror vdev will only hold as much data as its smallest member. A mirror vdev can withstand the failure of 
+all but one of its members without losing any data.&lt;/p&gt;
+
+&lt;p&gt;A mirror will write at the speed of it’s slowest disk, as all devices need to receive each written block, and will read at a sum 
+of the devices, because any block can be read from any device in the mirror.&lt;/p&gt;
+
+&lt;p&gt;A regular single disk vdev can be upgraded to a mirror vdev at any time with &lt;code class=&quot;highlighter-rouge&quot;&gt;zpool attach&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RAID-Z&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;RAID-Z is a software implementation of RAID5 - it performs similarly to standard RAID-5 implementations. The capacity of each disk
+can be mixed, but only the lowest-disk capacity is used across all disks. The capacity of a RAID-Z vdev is the sum of the raw disk
+capacity, minus one disk for redundancy.&lt;/p&gt;
+
+&lt;p&gt;It is recommended to add no more than nine disks in a single vdev. If the configuration has more disks, it is recommended to divide 
+them into separate vdevs and the pool data will be striped across them.&lt;/p&gt;
+
+&lt;p&gt;RAID-Z technically production safe, but not recommended, because a single disk failure results in the vdev having no redundancy. Use
+RAID-Z2 or 3 if possible.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RAID-Z2&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;RAID-Z2 is a software implementation of RAID6. It is similar to RAID-Z, but offers two redundant disks.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RAID-Z2&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;RAID-Z2 is a software implementation of RAID6. It is similar to RAID-Z, but offers three redundant disks. It will be slower than 
+RAID-Z2 and 1, but is also highly resilient - you can loose up to 3 disks from the vdev safely.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Disk&lt;/strong&gt; - not suitable for production&lt;/p&gt;
+
+&lt;p&gt;A &lt;em&gt;disk&lt;/em&gt; vdev is a single disk. The most basic type of vdev is a standard block device. This can be an entire disk (such as &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda&lt;/code&gt;)
+or a partition (&lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;). This is not suitable for production because the loss of that single disk will cause the pool to fail.&lt;/p&gt;
+
+&lt;p&gt;However, a disk vdev can be upgraded to a mirror by attaching a second disk of equal or larger size.&lt;/p&gt;
+
+&lt;p&gt;TODO: document the command to upgrade a disk to a mirror.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;File&lt;/strong&gt; - not suitable for production&lt;/p&gt;
+
+&lt;p&gt;In addition to disks, ZFS pools can be backed by regular files, this is especially useful for testing and experimentation. Use the
+full path to the file as the device path in zpool create. All vdevs must be at least 128 MB in size.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Spare&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;ZFS has a special pseudo-vdev type for keeping track of available hot spares. Note that installed hot spares are not deployed
+automatically; they must manually be configured to replace the failed device using &lt;code class=&quot;highlighter-rouge&quot;&gt;zfs replace&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Log&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;ZFS Log Devices, also known as ZFS Intent Log (ZIL) move the intent log from the regular pool devices to a dedicated device,
+typically an SSD. Having a dedicated log device can significantly improve the performance of applications with a high volume
+of synchronous writes, especially databases. Log devices can be mirrored, but RAID-Z is not supported. If multiple log
+devices are used, writes will be load balanced across them.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Cache&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Adding a cache vdev to a pool will add the storage of the cache to the L2ARC. Cache devices cannot be mirrored. Since a cache
+device only stores additional copies of existing data, there is no risk of data loss. Note that having a large cache device
+can have adverse effects, because files in the cache must be referenced in memory. If the cache is too large, it can reduce 
+the ability to cache data in memory, which will be faster than any cache device.&lt;/p&gt;
+
+&lt;h3 id=&quot;others&quot;&gt;Others&lt;/h3&gt;
+
+&lt;p&gt;TODO: Document the following concepts:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;pool - done&lt;/li&gt;
+  &lt;li&gt;vdev - done&lt;/li&gt;
+  &lt;li&gt;Copy-on-write&lt;/li&gt;
+  &lt;li&gt;Dataset&lt;/li&gt;
+  &lt;li&gt;Clone&lt;/li&gt;
+  &lt;li&gt;Compression&lt;/li&gt;
+  &lt;li&gt;Deduplication&lt;/li&gt;
+  &lt;li&gt;Scrub&lt;/li&gt;
+  &lt;li&gt;Resilver&lt;/li&gt;
+  &lt;li&gt;Degraded pool&lt;/li&gt;
+  &lt;li&gt;each of the vdev types (mirror, RAIDz, etc)&lt;/li&gt;
+  &lt;li&gt;snapshot&lt;/li&gt;
+  &lt;li&gt;clone&lt;/li&gt;
+  &lt;li&gt;Special devices
+    &lt;ul&gt;
+      &lt;li&gt;ZIL&lt;/li&gt;
+      &lt;li&gt;L2ARC&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;raid-card-note&quot;&gt;RAID Card Note&lt;/h2&gt;
+&lt;p&gt;Ideally, RAID cards should be replaced with JBOD HBA devices, to allow the ZFS to have full control over the drive. However, if 
+this is not possible for whatever reason, setup each individual disk as it’s own single-disk RAID 0 volume.&lt;/p&gt;
+
+&lt;p&gt;This is sub-par, because this stops ZFS from doing some lower-level drive access, instead providing it a RAID card abstraction,
+but can be acceptable if required.&lt;/p&gt;
+
+&lt;h2 id=&quot;install-packages&quot;&gt;Install Packages&lt;/h2&gt;
+
+&lt;p&gt;First, install the needed packages from the &lt;code class=&quot;highlighter-rouge&quot;&gt;apt&lt;/code&gt; repos.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-add-repository universe -y &amp;amp;&amp;amp;
+sudo apt update &amp;amp;&amp;amp;
+sudo apt install -y zfsutils-linux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To confirm the ZFS package is installed properly, run:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo zpool status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This should return &lt;code class=&quot;highlighter-rouge&quot;&gt;no pools available&lt;/code&gt;, which confirms that ZFS is installed,
+and no pool is set up.&lt;/p&gt;
+
+&lt;h2 id=&quot;find-your-disks&quot;&gt;Find Your Disks&lt;/h2&gt;
+
+&lt;p&gt;Find all your block devices with &lt;code class=&quot;highlighter-rouge&quot;&gt;lsblk&lt;/code&gt; (LiSt BLocK devices)&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Output will look like:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+loop0    7:0    0  86.9M  1 loop /snap/core/4917
+sda      8:0    0 136.1G  0 disk 
+  sda1   8:1    0   512M  0 part /boot/efi
+  sda2   8:2    0 135.6G  0 part /
+sdb      8:16   0   2.7T  0 disk 
+sdc      8:32   0   2.7T  0 disk 
+sdd      8:48   0   2.7T  0 disk 
+sde      8:64   0   2.7T  0 disk 
+sdf      8:80   0 558.4G  0 disk 
+sdg      8:96   0 558.4G  0 disk 
+sdh      8:112  0 558.4G  0 disk 
+sdi      8:128  0 558.4G  0 disk 
+sdj      8:144  0 558.4G  0 disk 
+sdk      8:160  0 558.4G  0 disk 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first column is the device name in &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/*&lt;/code&gt;. That is: &lt;code class=&quot;highlighter-rouge&quot;&gt;sde&lt;/code&gt; is the
+device found at &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sde&lt;/code&gt; on the system.&lt;/p&gt;
+
+&lt;p&gt;In this case, we are setting up 5x vdevs, each a mirror of two drives:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;mirror 1 (3.0t): &lt;code class=&quot;highlighter-rouge&quot;&gt;sdb&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sdc&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;mirror 2 (3.0t): &lt;code class=&quot;highlighter-rouge&quot;&gt;sdd&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sde&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;mirror 3 (0.5t): &lt;code class=&quot;highlighter-rouge&quot;&gt;sdf&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sdg&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;mirror 4 (0.5t): &lt;code class=&quot;highlighter-rouge&quot;&gt;sdh&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sdi&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;mirror 5 (0.5t): &lt;code class=&quot;highlighter-rouge&quot;&gt;sdj&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sdk&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These mirrors are added as high-level devices in the pool we will call &lt;code class=&quot;highlighter-rouge&quot;&gt;tank&lt;/code&gt; for a total usable space of
+about 7.5T.&lt;/p&gt;
+
+&lt;h2 id=&quot;pool-setup-basics&quot;&gt;Pool Setup Basics&lt;/h2&gt;
+&lt;p&gt;With the pool layout and device names found above, we create the pool.&lt;/p&gt;
+
+&lt;p&gt;The command syntax is as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;zpool&lt;/code&gt; : this is the name of the command line tool&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;create&lt;/code&gt; : create a new pool&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;[name of pool]&lt;/code&gt; : a string value naming the pool. Tank is often a default value used.&lt;/li&gt;
+  &lt;li&gt;vdev definition block (repeat once per vdev in your pool)
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;[type of vdev]&lt;/code&gt; : in our case, we’re using mirror. Could also be &lt;code class=&quot;highlighter-rouge&quot;&gt;RAIDZ&lt;/code&gt; (raid5), &lt;code class=&quot;highlighter-rouge&quot;&gt;RAIDZ2&lt;/code&gt; (raid 6), or &lt;code class=&quot;highlighter-rouge&quot;&gt;RAIDZ3&lt;/code&gt; 
+ (raid7), or some other values.&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;device names in vdev&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since this may not be clear, here are a few examples of commands and their output:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zpool create tank mirror c1d0 c2d0 mirror c3d0 c4d0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Create a pool called &lt;code class=&quot;highlighter-rouge&quot;&gt;tank&lt;/code&gt;, with two vdevs. First vdev is a mirror 
+with devices &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/c1d0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/c2d0&lt;/code&gt;, second vdev is a mirror 
+with devices &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/c3d0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/c4d0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zpool create tank raidz2 sdb sdc sdd sde sdf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Create a pool called &lt;code class=&quot;highlighter-rouge&quot;&gt;tank&lt;/code&gt;, with one vdev. vdev is a raidz2 (raid6), 
+consisting of &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sdb&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sdc&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sdd&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sde&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sdf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-pool&quot;&gt;Create Pool&lt;/h2&gt;
+
+&lt;p&gt;In our case, the pool layout found above, we will create a pool called tank with the mirrors 
+we found above using the following command:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo zpool create -n tank mirror sdb sdc mirror sdd sde mirror sdf sdg mirror sdh sdi mirror sdj sdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;-n&lt;/code&gt; flag makes it a dry-run. This will allow you to see the proposed result of your actions.&lt;/p&gt;
+
+&lt;p&gt;The output will look like:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;would create 'tank' with the following layout:
+
+	tank
+	  mirror
+	    sdb
+	    sdc
+	  mirror
+	    sdd
+	    sde
+	  mirror
+	    sdf
+	    sdg
+	  mirror
+	    sdh
+	    sdi
+	  mirror
+	    sdj
+	    sdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is what we expect: 5 pairs of mirrors.&lt;/p&gt;
+
+&lt;p&gt;Tweak the syntax with dry-runs as many times as is needed. No changes are made to the disks
+when run in dry-run mode.&lt;/p&gt;
+
+&lt;p&gt;When you are satisfied, remove &lt;code class=&quot;highlighter-rouge&quot;&gt;-n&lt;/code&gt;, and the command will actually be executed on the disks.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo zpool create tank mirror sdb sdc mirror sdd sde mirror sdf sdg mirror sdh sdi mirror sdj sdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you receive no output, it was likely successful. Confirm by running a few commands to 
+view the status of your pool.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;zpool status&lt;/code&gt; - detailed pool information, including disk health&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;zfs list&lt;/code&gt; - list of all pools and datasets, showing free/used space&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;df -h&lt;/code&gt; - systemwide disk-space monitor - your pool should now be mounted in the root of 
+ the disk at your pool name (ie -  a pool name tank is mounted by default at &lt;code class=&quot;highlighter-rouge&quot;&gt;/tank&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;create-datasets&quot;&gt;Create Datasets&lt;/h2&gt;
+
+&lt;p&gt;Datasets are ways of dividing up a pool. A dataset can be assigned quotas, replicated, 
+configured, mounted, and snapshot seperately from every other dataset.&lt;/p&gt;
+
+&lt;p&gt;For example, you might set one dataset for home directories, and another for VM images. Your VM
+images might be snapshotted nightly, replicated off the host, and stored with compression 
+disabled, whereas your home directories would be snapshotted hourly with a higher 
+compression level enabled.&lt;/p&gt;
+
+&lt;p&gt;Each dataset is treated as it’s own linux filesystem, but the storage capacity of the entire pool
+is shared across datasets (unless you apply quotas or reservations to restrict capacity use).&lt;/p&gt;
+
+&lt;p&gt;Datasets can also be nested, like standard linux filesystems.&lt;/p&gt;
+
+&lt;p&gt;Create some datasets like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo zfs create tank/vms
+sudo zfs create tank/vms/installers
+sudo zfs create tank/vms/disks
+sudo zfs create tank/system
+sudo zfs create tank/system/homedirs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This creates datasets for VM install images, VM disks, and the home directories.&lt;/p&gt;
+
+&lt;p&gt;After creating your datasets, look again using the tools listed above (&lt;code class=&quot;highlighter-rouge&quot;&gt;df -h&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;zfs list&lt;/code&gt;, etc), 
+and you’ll see your datasets listed there.&lt;/p&gt;
+
+&lt;p&gt;TODO: ADD MORE DETAILS HERE ABOUT HOW DATASETS LOOK LIKE NORMAL SUBDIRS BUT AREN’T
+TODO: ADD MORE DETAILS HERE ABOUT DATASET NAMES VS MOUNT PATHS&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 07:58:29 -0500</pubDate>
+        <link>http://docs.yanke.io//zfs/create-pool.html</link>
+        <guid isPermaLink="true">http://docs.yanke.io//zfs/create-pool.html</guid>
+        
+        <category>zfs</category>
+        
+        <category>zfsonlinux</category>
+        
+        <category>filesystems</category>
+        
+        <category>storage</category>
+        
+        <category>ubuntu-18-04</category>
+        
+        
+        <category>ZFS</category>
+        
+      </item>
+    
+      <item>
+        <title>Setup X2Go Server</title>
+        <description>&lt;h2 id=&quot;what-is-x2go&quot;&gt;What is X2Go?&lt;/h2&gt;
+&lt;p&gt;X2Go is a linux tool similar to RDP for windows which allows remote access of a system with higher performance
+than is possible with VNC.&lt;/p&gt;
+
+&lt;p&gt;VNC simply sends a video stream, but like RDP, X2Go does some client-side rendering of the window to improve
+responsiveness. It also allows multiple users to start multiple sessions on a single system, similar to 
+Microsoft Terminal Services.&lt;/p&gt;
+
+&lt;h2 id=&quot;add-repository&quot;&gt;Add Repository&lt;/h2&gt;
+&lt;p&gt;First, install the X2Go PPA. While X2Go is available in the general repositories, this allows us to track the
+newest patches and get additional add-ons not available in the general repository.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-add-repository ppa:x2go/stable -y
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;install-x2go-server-package&quot;&gt;Install X2Go Server package&lt;/h2&gt;
+
+&lt;p&gt;With this command, x2go’s server component should be installed.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt install -y x2goserver x2goserver-xsession
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Additionally, you may want the following addons, depending on your desktop environment:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Mate
+sudo apt install -y x2gomatebindings
+
+# LXDE
+sudo apt install -y x2golxdebindings
+
+# Plasma / KDE
+sudo apt install -y plasma-widget-x2go
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that X2Go server does not work well with Unity or Gnome. Mate is generally the easiest desktop
+environment to use, because it is simple, lightweight, and well supported by x2go. KDE is also
+fairly usable.&lt;/p&gt;
+
+&lt;h2 id=&quot;client-installation&quot;&gt;Client Installation&lt;/h2&gt;
+
+&lt;p&gt;X2Go has two main clients available, the main client simply called &lt;code class=&quot;highlighter-rouge&quot;&gt;x2goclient&lt;/code&gt;, as well as a lighter
+weight python client called &lt;code class=&quot;highlighter-rouge&quot;&gt;pyhoca&lt;/code&gt;. However, pyhoca uses the configuration set in the main x2goclient,
+so no matter which one you prefer, you must install &lt;code class=&quot;highlighter-rouge&quot;&gt;x2goclient&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The client is installed on your desktop/laptop, not the server.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt install -y x2goclient
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once this is installed, run &lt;code class=&quot;highlighter-rouge&quot;&gt;x2goclient&lt;/code&gt; from your terminal, or find it in your applications menu. From
+here, you can then set up a connection to a host.&lt;/p&gt;
+
+&lt;p&gt;Want more information about setting up the client? Look at 
+the &lt;a href=&quot;//x2go/setup-client.html&quot;&gt;full client install guide&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 07:58:29 -0500</pubDate>
+        <link>http://docs.yanke.io//x2go/setup-server.html</link>
+        <guid isPermaLink="true">http://docs.yanke.io//x2go/setup-server.html</guid>
+        
+        <category>x2go</category>
+        
+        <category>remote-access</category>
+        
+        <category>rdp</category>
+        
+        <category>ubuntu-18-04</category>
+        
+        
+        <category>X2Go</category>
+        
+      </item>
+    
+      <item>
+        <title>Setup X2Go Client</title>
+        <description>&lt;p&gt;Related: &lt;em&gt;&lt;a href=&quot;//x2go/setup-server.html&quot;&gt;Server install guide&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;windows-client&quot;&gt;Windows Client&lt;/h2&gt;
+
+&lt;p&gt;There is a Windows client available to access remote linux servers.&lt;/p&gt;
+
+&lt;p&gt;The client can be downloaded from the &lt;a href=&quot;https://wiki.x2go.org/doku.php/doc:installation:x2goclient&quot;&gt;x2go site&lt;/a&gt;.
+Download &lt;code class=&quot;highlighter-rouge&quot;&gt;x2goclient-xxx-setup.exe&lt;/code&gt; from the Windows link, and install like any other installer.&lt;/p&gt;
+
+&lt;h2 id=&quot;linux-client&quot;&gt;Linux Client&lt;/h2&gt;
+
+&lt;p&gt;First, install the X2Go PPA. While X2Go is available in the general repositories, this allows us to track the
+newest patches and get additional add-ons not available in the general repository.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-add-repository ppa:x2go/stable -y
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, install the package:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt install -y x2goclient
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;client-configuration---all-oses&quot;&gt;Client Configuration - All OSes&lt;/h2&gt;
+
+&lt;p&gt;Once the client is installed, configuration should be similar across OSes.&lt;/p&gt;
+
+&lt;p&gt;When the client opens, setup a new connection.&lt;/p&gt;
+
+&lt;p&gt;Set the following variables to connect to a serve:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Under the session tab:
+    &lt;ul&gt;
+      &lt;li&gt;Session name - This is an arbitrary string which will name the session&lt;/li&gt;
+      &lt;li&gt;Host - An IP or DNS name with the server’s hostname&lt;/li&gt;
+      &lt;li&gt;Login - SSH Username on the host&lt;/li&gt;
+      &lt;li&gt;SSH port: defaults to 22, modify as needed&lt;/li&gt;
+      &lt;li&gt;If possible, use the RSA/DSA key. This is more secure than password connections. Specify the path
+to your private key.&lt;/li&gt;
+      &lt;li&gt;Click the ghost icon if you’d like to set a new icon. This is purely aesthetic.&lt;/li&gt;
+      &lt;li&gt;IMPORTANT: Ensure the session type is correct. More about this below.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Input/Output tab:
+    &lt;ul&gt;
+      &lt;li&gt;Change the resolution to your desired size if you’d like.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;selecting-session-type&quot;&gt;Selecting Session Type&lt;/h2&gt;
+
+&lt;p&gt;The session type is an important setting - it decides what remote shell is connected to.&lt;/p&gt;
+
+&lt;p&gt;The first option for session type is picking a Display Environment (KDE, MATE, XFCE, etc). You must select
+a DE which is already installed on the system, or the connection will fail. Selecting a DE will also force 
+the user to connect to a background session, not the console output session.&lt;/p&gt;
+
+&lt;p&gt;The next option is using “Connect to local desktop”. This is equivilent to a console connection, and
+whatever is done on this view will also be visible to the system’s monitors / VM console, if connected.&lt;/p&gt;
+
+&lt;p&gt;Finally, you can use “Single application” to run an X2Go session with just a single application, instead
+of an entire remote window. This can be useful when you only ever need to run a remote application. If
+this option is used, you must also specify the full path to the application. This does not always work well
+on Windows (at least Windows 7 where I have tested it).&lt;/p&gt;
+
+&lt;h2 id=&quot;connecting&quot;&gt;Connecting&lt;/h2&gt;
+
+&lt;p&gt;Once the session details are saved, you’ll see a box on the right side of the client for your session.
+Click the box to connect.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 07:58:29 -0500</pubDate>
+        <link>http://docs.yanke.io//x2go/setup-client.html</link>
+        <guid isPermaLink="true">http://docs.yanke.io//x2go/setup-client.html</guid>
+        
+        <category>x2go</category>
+        
+        <category>remote-access</category>
+        
+        <category>rdp</category>
+        
+        <category>ubuntu-18-04</category>
+        
+        <category>windows</category>
+        
+        
+        <category>X2Go</category>
+        
+      </item>
+    
+      <item>
+        <title>Set Static IP with Netplan</title>
+        <description>&lt;h2 id=&quot;what-is-netplan&quot;&gt;What is Netplan?&lt;/h2&gt;
+&lt;p&gt;Ubuntu 18.04 LTS ships with &lt;a href=&quot;https://netplan.io&quot;&gt;Netplan&lt;/a&gt; as a network management tool by default. Netplan allows simpler and 
+declarative configuration of networks and interfaces with YML files, which eases both human and machine configuration.. Netplan 
+talks to &lt;code class=&quot;highlighter-rouge&quot;&gt;systemd-networkd&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Network Manager&lt;/code&gt; to apply the desired configuration.&lt;/p&gt;
+
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;/h2&gt;
+&lt;p&gt;Netplan configuration files are stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/netplan/*.yaml&lt;/code&gt;. The default one created by the Ubuntu installer is stored at
+&lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/netplan/50-cloud-init.yaml&lt;/code&gt;. Typically, editing this file is sufficent, though you can create others.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;TODO: Confirm it’s safe to edit 50-cloud-init.yaml, this is not yet clear to me.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;By default, the configuration file looks like this (given two interfaces called &lt;code class=&quot;highlighter-rouge&quot;&gt;enp1s0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;enp2s0&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;network:
+    ethernets:
+        enp1s0:
+            addresses: []
+            dhcp4: true
+        enp2s0:
+            addresses: []
+            dhcp4: true
+            optional: true
+    version: 2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To set a static IP, set the options as found below, ensuring you set &lt;code class=&quot;highlighter-rouge&quot;&gt;dhcp4: false&lt;/code&gt;, and then specify &lt;code class=&quot;highlighter-rouge&quot;&gt;addresses&lt;/code&gt;, 
+&lt;code class=&quot;highlighter-rouge&quot;&gt;gateway4&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;nameservers : addresses&lt;/code&gt;. There are also additional options available under the &lt;code class=&quot;highlighter-rouge&quot;&gt;nameservers&lt;/code&gt; key.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;network:
+    ethernets:
+        enp1s0:
+            dhcp4: false
+            addresses: [192.168.1.2/24]
+            gateway4: 192.168.1.1
+            nameservers:
+              addresses: [8.8.8.8,8.8.4.4]
+        enp2s0:
+            addresses: []
+            dhcp4: true
+            optional: true
+    version: 2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, to apply, run:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo netplan apply
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or, if you encounter an error and need to debug:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo netplan --debug generate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 07:58:29 -0500</pubDate>
+        <link>http://docs.yanke.io//networking/netplan-set-static-ip.html</link>
+        <guid isPermaLink="true">http://docs.yanke.io//networking/netplan-set-static-ip.html</guid>
+        
+        <category>networking</category>
+        
+        <category>netplan</category>
+        
+        <category>static-ip</category>
+        
+        <category>ubuntu-18-04</category>
+        
+        
+        <category>Networking</category>
+        
+      </item>
+    
+      <item>
+        <title>Create Host Bridge Network</title>
+        <description>&lt;p&gt;By default, KVM provides a NAT network for VMs. This documents the setup of a
+bridge interface, to allow VMs on the  host to join the network of the host,
+instead of being behind a NAT (which is default).&lt;/p&gt;
+
+&lt;p&gt;In 18.04 this is accomplished by using the netplan network configuration tool,
+which was not used in the previous LTS.&lt;/p&gt;
+
+&lt;p&gt;Most installations will have a &lt;code class=&quot;highlighter-rouge&quot;&gt;50-cloud-init.yaml&lt;/code&gt; by default, but you may
+have to adjust if not.&lt;/p&gt;
+
+&lt;p&gt;The bridge interface will replace the main interface, by default.&lt;/p&gt;
+
+&lt;p&gt;First, install &lt;code class=&quot;highlighter-rouge&quot;&gt;bridge-utils&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt install -y bridge-utils 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Open the file:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo nano /etc/netplan/50-cloud-init.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By default, it will look something like:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;network:
+    ethernets:
+        enp1s0:
+            addresses: []
+            dhcp4: true
+        enp2s0:
+            addresses: []
+            dhcp4: true
+            optional: true
+    version: 2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;First, disable DHCP on the interface you wish to bridge. Set &lt;code class=&quot;highlighter-rouge&quot;&gt;dhcp4: true&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;dhcp4: no&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Add this to the bottom, noting the interface which
+it should be bridged to. To bridge with a static IP:
+(NOTE: UNTESTED)&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    bridges:
+        br0:
+            interfaces: [enp0s3]
+            dhcp4: no
+            optional: true
+            addresses: [172.168.0.10/24]
+            gateway4: 172.168.0.1
+            nameservers:
+              addresses: [172.168.0.1]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or, to bridge with DHCP:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    bridges:
+        br0:
+            interfaces: [enp1s0]
+            dhcp4: true
+            optional: true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The final file will look like:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;network:
+    ethernets:
+        enp1s0:
+            addresses: []
+            dhcp4: no   
+        enp2s0:
+            addresses: []
+            dhcp4: true
+            optional: true
+    version: 2
+
+    bridges:
+        br0:
+            interfaces: [enp1s0]
+            dhcp4: true
+            optional: true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To apply the configuration:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo netplan apply
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or to apply with debugging:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo netplan --debug  apply
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This will disable the nic you mention, and enable the new bridge nic. This will
+change the new mac address, and the IP address, so you will have to update the DHCP 
+reservation if this is being used.&lt;/p&gt;
+
+&lt;p&gt;Next, confirm the bridge is set up properly:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo networkctl status -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;br0&lt;/code&gt; should be in state: &lt;code class=&quot;highlighter-rouge&quot;&gt;routable (configured)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Similarly, check the ip addresses:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ip addr
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;br0 should have an ip address associated.&lt;/p&gt;
+
+&lt;p&gt;Finally, to connect a VM to the bridge network, when creating the VM in &lt;code class=&quot;highlighter-rouge&quot;&gt;virt-manager&lt;/code&gt;,
+select “Specify shared device name”, and enter &lt;code class=&quot;highlighter-rouge&quot;&gt;br0&lt;/code&gt; in the text field.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 10 Oct 2018 07:58:29 -0500</pubDate>
+        <link>http://docs.yanke.io//kvm/bridge-network.html</link>
+        <guid isPermaLink="true">http://docs.yanke.io//kvm/bridge-network.html</guid>
+        
+        <category>kvm</category>
+        
+        <category>qemu</category>
+        
+        <category>virtual machine</category>
+        
+        
+        <category>KVM</category>
+        
+      </item>
+    
+  </channel>
+</rss>
