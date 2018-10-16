@@ -1,0 +1,6 @@
+# Ignore compiled site
+_site
+
+
+# Ignore nano tmp files
+.*.swp
