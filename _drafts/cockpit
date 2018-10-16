@@ -1,0 +1,8 @@
+To install cockpit, with Cockpit VM management tooling, run:
+
+
+```
+sudo apt install -y cockpit cockpit-machines
+```
+
+Cockpit is now available on HOSTIP:9090.
