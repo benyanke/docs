@@ -1,8 +1,10 @@
-To install cockpit, with Cockpit VM management tooling, run:
+Cockpit provides a general web interface to access common linux system functions.
+
+To install cockpit, run:
 
 
 ```
-sudo apt install -y cockpit cockpit-machines
+sudo apt install -y cockpit
 ```
 
 Cockpit is now available on HOSTIP:9090.
