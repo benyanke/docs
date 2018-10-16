@@ -4,6 +4,8 @@ title:  "Create Host Bridge Network"
 date:   2018-10-10 12:58:29
 categories: KVM
 tags: 
+ - networking
+ - netplan
  - kvm
  - qemu
  - virtual machine
