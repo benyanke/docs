@@ -50,7 +50,7 @@ virt-* tools, which allow you to access guest disk images without booting the VM
 sudo apt-get install -y libguestfs-tools
 ```
 
-## Checks
+Run the following command to ensure KVM is installed:
 
 ```
 kvm-ok
@@ -58,3 +58,28 @@ kvm-ok
 
 This should output `KVM acceleration can be used`. If it does, you've successfully 
 installed KVM.
+
+## Group Permissions 
+
+By default, only root has permission to modify VMs. However, when using tools like 
+`virt-manager` remotely, you do not want to SSH as root, as this is insecure.
+
+Instead, add any users needing to modify VMs to the `libvirt` group. 
+
+```
+sudo usermod -aG libvirt [username]
+```
+
+This will not take affect until after the user's session is restarted.
+
+The user can check their own groups by simply running `group`, which outputs the groups 
+that the user is part of.
+
+Additionally, you can run `group [username]` to check the group membership of another 
+user.
+
+
+## Complete!
+
+You're done and ready to run VMs. There are many management tools available for KVM, 
+including `virsh` (terminal), `virt-manager` (GUI), and a host of web based tools.
