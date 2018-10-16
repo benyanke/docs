@@ -25,3 +25,8 @@ theme: jekyll-theme-slate
 # TODO: Implement this
 # https://stackoverflow.com/questions/17118551/generating-a-list-of-pages-not-posts-in-a-given-category
 # category-list: [ZFS, KVM]
+
+
+
+show_downloads: true
+# google_analytics: [Your Google Analytics tracking ID]

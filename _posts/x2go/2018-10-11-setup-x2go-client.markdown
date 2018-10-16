@@ -12,8 +12,7 @@ tags:
  - windows
 ---
 
-Related: _[Server install guide]({{ site.baseurl }}{% post_url 2018-10-11-setup-x2go-server %})_
-
+Related: _[Server install guide]({{ site.baseurl }}{% post_url x2go/2018-10-11-setup-x2go-server %})_
 ## Windows Client
 
 There is a Windows client available to access remote linux servers.

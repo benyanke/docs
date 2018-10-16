@@ -69,4 +69,4 @@ Once this is installed, run `x2goclient` from your terminal, or find it in your 
 here, you can then set up a connection to a host.
 
 Want more information about setting up the client? Look at 
-the [full client install guide]({{ site.baseurl }}{% post_url 2018-10-11-setup-x2go-client %})
+the [full client install guide]({{ site.baseurl }}{% post_url x2go/2018-10-11-setup-x2go-client %})
