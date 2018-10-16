@@ -47,5 +47,5 @@ and login using `admin` / `your password provided above`.
 
 THINGS LEFT TODO:
  * Add worker nodes
-
+ * LDAPS auth
 
