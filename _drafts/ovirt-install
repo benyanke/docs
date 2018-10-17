@@ -2,7 +2,31 @@ On main node:
 
 starting with centos7
 
+## Basic CentOS Install
 
+A few packages to install for general system administration. Installs wget, htop.
+
+TODO: May add more here
+
+The script below installs `wget`, adds the repo for expanded package lists, then installs
+`htop` from that expanded package list.
+
+
+```
+sudo yum install -y wget screen &&
+sudo wget dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm &&
+sudo rpm -ihv epel-release-7-11.noarch.rpm &&
+sudo rm epel-release-7-11.noarch.rpm &&
+sudo yum install -y htop
+```
+
+
+## Read System Requirements
+
+Give the [system requirements](https://ovirt.org/documentation/install-guide/chap-System_Requirements/)
+guide a read, and ensure you have everything you need.
+
+## OVirt Head Node Install
 
 First, run updates to grab latest packages in the base OS.
 
@@ -10,7 +34,8 @@ First, run updates to grab latest packages in the base OS.
 sudo yum -y update
 ```
 
-This may take several minutes. At times, there can be tens or hundreds of upgrades, depending on how long it has been since the install disk was generated.
+This may take several minutes. At times, there can be tens or hundreds of upgrades, depending on 
+how long it has been since the install disk was generated.
 
 Then, reboot the server to apply the latest versions.
 
@@ -26,7 +51,8 @@ If all succeeds, install ovirt:
 sudo yum -y install ovirt-engine
 ```
 
-There are about 300 sub-packages in the ovirt-engine package. Installation will take about 5-10m, depending on server speed.
+There are about 300 sub-packages in the ovirt-engine package. Installation will take about 5-10m, 
+depending on server speed.
 
 Finally, once it is installed, begin setting up the node:
 
@@ -45,7 +71,78 @@ Then go, in a web browser, to the address provided at the end of the setup,
 and login using `admin` / `your password provided above`.
 
 
-THINGS LEFT TODO:
+## Installing Host Node
+
+There are two types of worker nodes: *Thin Hosts* and *Thick Hosts*. Thin hosts are installed 
+from an OVirt iso image, and while based on CentOS, only contain the needed packages to run 
+Virtual Machines, and are optimized for this. Thick hosts are full CentOS or RHEL installs, with 
+the OVirt packages installed. Generally, thick hosts are used if you need to heavily customize 
+your worker nodes, and otherwise thin hosts are the best way to provision hosts.
+
+This guide will document the install of *Thin Hosts* from the OVirt site.
+
+First, fetch the latest ISO from (the OVirt download paage)[https://ovirt.org/node/]. Ensure you 
+verify the hashes of the ISOs before writing them to a USB stick. TODO: Find these hashes.As 
+documented on the page linked above, generally the node is installed, and then `yum update` is 
+run to update to future minor-versions.
+
+Write the ISO to a USB stick using the normal methods. Boot from the USB and go through the 
+install steps. Install using default settings, adjusting where needed to set things like hostname 
+or host IP address. Use the Automatic Partitioning if possible.
+
+When the install is complete, you will add your new host to the OVirt cluster. The following 
+section was borrowed from the [add 
+host](https://ovirt.org/documentation/install-guide/chap-Adding_a_Host_to_the_oVirt_Engine/) 
+guide from the OVirt manuals.
+
+
+
+    From the Administration Portal, click Compute → Hosts.
+
+    Click New.
+
+    Use the drop-down list to select the Data Center and Host Cluster for the new host.
+
+    Enter the Name and the Hostname of the new host. The standard SSH port, port 22, is auto-filled in the SSH Port field.
+
+    Select an authentication method to use for the Engine to access the host.
+
+        Enter the root user's password to use password authentication.
+
+        Alternatively, copy the key displayed in the SSH PublicKey field to /root/.ssh/authorized_keys on the host to use public key authentication.
+
+    Click the Advanced Parameters button to expand the advanced host settings.
+
+        Optionally disable automatic firewall configuration.
+
+        Optionally add a host SSH fingerprint to increase security. You can add it manually, or fetch it automatically.
+
+    Optionally configure power management, where the host has a supported power management card. For information on power management configuration, see "Host Power Management Settings Explained" in the Administration Guide.
+
+    Click OK.
+
+The new host displays in the list of hosts with a status of Installing, and you can view the progress of the installation in the details pane. After a brief delay the host status changes to Up
+
+
+
+
+
+
+
+
+
+
+## THINGS LEFT TO RESEARCH
  * Add worker nodes
- * LDAPS auth
+ * LDAPS auth or at least other users (https://ovirt.org/documentation/admin-guide/chap-Users_and_Roles/)
+ * Postgres Backup
+ * Test Failure Modes
+   * Network partition
+   * Head node down
+   * Head node rebuild
+ * Research pieces involved
+ * Adding / removing / node maintance
+ * Gluster/Ceph
+ * VM Image Handling
+ * Certificates
 
