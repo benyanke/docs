@@ -95,6 +95,45 @@ section was borrowed from the [add
 host](https://ovirt.org/documentation/install-guide/chap-Adding_a_Host_to_the_oVirt_Engine/) 
 guide from the OVirt manuals.
 
+You will also want to set the host's hostname (maybe this should be done during install?). Run 
+the following commands to edit the hostname files. In `hosts`, add the hostname to the end of 
+both lines. In hostname, remove what is there and replace with your FQDN. This must be done in 
+`vi`, as the nodes do not have - by default - nano or other text editors.
+
+When you're done, reboot to apply new hostname.
+TODO: it's possible to do this without rebootting, but not sure how on CENTOS7.
+
+```
+sudo vi /etc/hosts
+sudo vi /etc/hostname
+sudo reboot
+```
+
+Finally, set the static ip if `ip addr` does not list a bound IP (which can occur if you don't 
+have DHCP on your subnet).
+
+To set a static ip, first find the interface (usually starting with `en` but depends per system), and open up 
+the interface config file for that interface:
+
+```
+sudo vi /etc/sysconfig/network-scripts/ifcfg-[INTERFACE NAME]
+```
+
+This may be already configured.
+
+Finally, bring the interface up:
+
+```
+sudo ifup [interface name]
+```
+
+Then check to ensure that the interface has it's IP:
+
+```
+ip addr
+```
+
+TODO: Research how to make this automatic. It's gotta be done on each boot for now.
 
 
     From the Administration Portal, click Compute → Hosts.
@@ -107,8 +146,7 @@ guide from the OVirt manuals.
 
     Select an authentication method to use for the Engine to access the host.
 
-        Enter the root user's password to use password authentication.
-
+        Enter the root user's password to use password authentication - DON'T USE OUTSIDE TESTING
         Alternatively, copy the key displayed in the SSH PublicKey field to /root/.ssh/authorized_keys on the host to use public key authentication.
 
     Click the Advanced Parameters button to expand the advanced host settings.
@@ -124,8 +162,47 @@ guide from the OVirt manuals.
 The new host displays in the list of hosts with a status of Installing, and you can view the progress of the installation in the details pane. After a brief delay the host status changes to Up
 
 
+=====================
 
 
+## Configuration of Datacenter
+
+Once logged in, go to: Compute -> Data Centres.
+
+You should see one default datacenter. Open it, and use the edit button to rename it. It should be a short 
+letters, numbers, and hyphen string noting the physical location.
+
+Returning to the DC list, you will likely see it's status as "uninitialized." This means all of it's 
+dependent parts are not fully configured. To be initialized, the cluster, host, and storage domains must be 
+configured first.
+
+## Configure Cluster
+Under Compute -> Cluster, rename the cluster to something appropriate. A cluster is a set of hosts. For most 
+smaller installations, one production cluster is likely sufficent. You can edit it's name using the edit 
+function if needed.
+	
+
+## Configure Storage
+
+For our current test, we'll use gluster.
+
+On the gluster node, add a password to root, and allow SSH root login via pw.
+
+TODO: not for prod
+TODO: DOCUMENT THIS
+
+FOR NOW: Installing gluster on vm hosts
+
+FOR NOW: Remote NFS server
+
+On all hosts:
+```
+sudo yum install -y nfs-utils
+```
+
+
+
+## Configure Host
 
 
 
@@ -146,3 +223,10 @@ The new host displays in the list of hosts with a status of Installing, and you 
  * VM Image Handling
  * Certificates
 
+
+
+## Debugging on nodes:
+  * Need interfaces to come up automatically on boot.
+    * using `ifup [name]` for now
+  * If you can't attach storage domains due to hostID sanlock issue:
+    * run `sudo service sanlock restart` on all worker nodes
