@@ -201,6 +201,52 @@ sudo yum install -y nfs-utils
 ```
 
 
+## Head node Ldap
+
+On the head node, install the package:
+```
+sudo yum install -yovirt-engine-extension-aaa-ldap-setup
+```
+
+Then, run the setup tool:
+
+```
+sudo ovirt-engine-extension-aaa-ldap-setup
+```
+
+You will be presented with LDAP server options. We will assume AD:
+
+```
+          Welcome to LDAP extension configuration program
+          Available LDAP implementations:
+           1 - 389ds
+           2 - 389ds RFC-2307 Schema
+           3 - Active Directory
+           4 - IBM Security Directory Server
+           5 - IBM Security Directory Server RFC-2307 Schema
+           6 - IPA
+           7 - Novell eDirectory RFC-2307 Schema
+           8 - OpenLDAP RFC-2307 Schema
+           9 - OpenLDAP Standard Schema
+          10 - Oracle Unified Directory RFC-2307 Schema
+          11 - RFC-2307 Schema (Generic)
+          12 - RHDS
+          13 - RHDS RFC-2307 Schema
+          14 - iPlanet
+          Please select: 
+```
+
+Select 3 for AD.
+
+When asked the forest name, this is the domain name (EXAMPLE.COM).
+
+Next, it will ask for `search user DN`. This is the bind DN. Load it with the bind credentials.
+
+Beyond this, select defaults.
+
+You will be offered a field to test logins - do so, and if it succeeds, you are done.
+
+Finally, reboot. When you log in, select your domain instead of "internal"
 
 ## Configure Host
 
@@ -230,3 +276,5 @@ sudo yum install -y nfs-utils
     * using `ifup [name]` for now
   * If you can't attach storage domains due to hostID sanlock issue:
     * run `sudo service sanlock restart` on all worker nodes
+
+
