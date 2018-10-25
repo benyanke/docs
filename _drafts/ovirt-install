@@ -246,7 +246,15 @@ Beyond this, select defaults.
 
 You will be offered a field to test logins - do so, and if it succeeds, you are done.
 
-Finally, reboot. When you log in, select your domain instead of "internal"
+Finally, reboot. When you log in, select your domain instead of "internal".
+
+It can be later reconfigured by editing: 
+
+```
+   /etc/ovirt-engine/aaa/EXAMPLE.COM.properties
+   /etc/ovirt-engine/extensions.d/EXAMPLE.COM.properties
+   /etc/ovirt-engine/extensions.d/EXAMPLE.COM-authn.properties
+```
 
 ## Configure Host
 
