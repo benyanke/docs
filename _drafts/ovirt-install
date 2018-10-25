@@ -247,6 +247,7 @@ Beyond this, select defaults.
 You will be offered a field to test logins - do so, and if it succeeds, you are done.
 
 Finally, reboot. When you log in, select your domain instead of "internal".
+TODO: test using `sudo systemctl restart ovirt-engine.service` - this may avoid reboot
 
 It can be later reconfigured by running `sudo ovirt-engine-extension-aaa-ldap-setup` again.
 
