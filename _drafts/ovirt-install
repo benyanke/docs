@@ -248,7 +248,9 @@ You will be offered a field to test logins - do so, and if it succeeds, you are 
 
 Finally, reboot. When you log in, select your domain instead of "internal".
 
-It can be later reconfigured by editing: 
+It can be later reconfigured by running `sudo ovirt-engine-extension-aaa-ldap-setup` again.
+
+Feel free to also look at the generated configuration files: 
 
 ```
    /etc/ovirt-engine/aaa/EXAMPLE.COM.properties
