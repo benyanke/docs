@@ -1,4 +1,4 @@
-On main node:
+Head node:
 
 starting with centos7
 
@@ -277,9 +277,12 @@ Feel free to also look at the generated configuration files:
  * Research pieces involved
  * Adding / removing / node maintance
  * Gluster/Ceph
- * VM Image Handling
+ * VM Image Handlingo
  * Certificates
 
+ * LDAP auth recovery - can you still log in if the DC is down (which may be on a VM. Also make sure the root creds are tracked somewhere, especially somewhere offline.
+
+Additioanlly, make sure VMs can be started without the head node, and the can be managed directly on the nodes if required.
 
 
 ## Debugging on nodes:
