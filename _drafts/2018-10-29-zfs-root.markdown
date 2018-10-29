@@ -16,9 +16,10 @@ tags:
 
 
 ZFS is typically used for non-root volumes, but for many situations, it's fully 
-supported for root volumes as well, allowing it to be used in many of the same ways that 
-BSD uses it, running full system snapshots, full system restores and sends via `zfs 
-send`, transparent compession, and the other many benefits of ZFS.
+supported for root volumes as well, allowing it to be used in many of the same 
+ways that BSD uses it, running full system snapshots, full system restores and 
+sends via `zfs send`, transparent compession, and the other many benefits of 
+ZFS.
 
 This guide should also work on 18.04-based versions of KDE neon.
 
@@ -138,6 +139,8 @@ Setup ZFS with the following steps. As usual, replace with your disk id. You can
 replace the hostname var, which will name the dataset the same as the system's hostname,
 to make management more easy later.
 
+Note: currently breaking here because the ZFS kernel module is not loaded. Debug this before continuing.
+
 ```
 hostname="SET SYSTEM HOSTNAME HERE"
 sudo apt update
@@ -157,3 +160,4 @@ sudo zfs create rootpool/ROOT/$hostname/usr
 sudo zfs create rootpool/ROOT/$hostname/var
 sudo zpool set bootfs=rootpool/ROOT/$hostname rootpool
 ```
+
