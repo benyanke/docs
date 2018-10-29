@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "ZFS Root on Ubuntu 18.04"
+title:  "ZFS Root on Kubuntu 18.04"
 date:   2018-10-29 12:58:29
 categories: ZFS
 tags: 
@@ -10,16 +10,20 @@ tags:
  - filesystems
  - storage
  - ubuntu-18-04
+ - kubuntu-18-04
  - desktop
 ---
 
 
-ZFS is typically used for non-root volumes, but for many situations, it's fully supported for root 
-volumes as well, allowing it to be used in many of the same ways that BSD uses it, running full system
-snapshots, full system restores and sends via `zfs send`, transparent compession, and the other
-many benefits of ZFS.
+ZFS is typically used for non-root volumes, but for many situations, it's fully 
+supported for root volumes as well, allowing it to be used in many of the same ways that 
+BSD uses it, running full system snapshots, full system restores and sends via `zfs 
+send`, transparent compession, and the other many benefits of ZFS.
 
-While it is possible to migrate an existing system to ZFS root, this guide assumes a clean install.
+This guide should also work on 18.04-based versions of KDE neon.
+
+While it is possible to migrate an existing system to ZFS root, this guide assumes a 
+clean install.
 
 TODO : make this attribution cleaner.
 Based on this guide: https://furneaux.ca/wiki/Ubuntu_ZFS_Root
@@ -69,7 +73,7 @@ Find the device name on the left side which points to your device found above. F
 `ata-WDC_WDS500G1B0A-00H9H0_170703801742`, which points to `/dev/sda/`.
 
 
-## Begin Disk Prep
+## Setup Disk Bootloader
 
 With the disk name found above, we will now setup the partitioning.
 
@@ -93,3 +97,63 @@ fine, as we are already deleting everything on the disk during install.
         won't persist after install.
 
 
+Next, setup GRUB on the partition. As above, replace with your disk ID.
+
+```
+$ sudo sgdisk -a1 -n2:34:2047 -t2:EF02 /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+```
+
+
+## Setup Partitions
+Next, install gparted to create the partitions. This will require a network connection.
+
+```
+sudo apt update && sudo apt install gparted -y
+```
+
+Open gparted, find your disk, and create the needed partitions.
+
+
+TODO: Look into the partition requirements to see if that's true
+Linux requires a small (512mb, fat32) partition for UEFI, a large data partition 
+(the rest of the disk) and a small boot partition. Optionally, a swap partition. 
+We will omit swap for now.
+
+Finally, we need a temporary install partition to run the installer against, which will 
+then be deleted and the main data partition expanded. To do this, place a 30G partition 
+(EXT4) directly after the main data parition, to allow easy resizing afterwards.
+
+Format the UEFI partition to fat32, the data partition to anything (unformatted, 
+if possible), and tmp install partition to ext4.
+
+Create these partitions using normal methods in gparted, or another partitioning tool.
+
+TODO: add more details here.
+
+TODO: Reword this to be more clear
+
+## Install ZFS Tmp Space
+
+Setup ZFS with the following steps. As usual, replace with your disk id. You can also 
+replace the hostname var, which will name the dataset the same as the system's hostname,
+to make management more easy later.
+
+```
+hostname="SET SYSTEM HOSTNAME HERE"
+sudo apt update
+sudo apt install -y zfsutils-linux
+sudo modprobe zfs
+sudo zpool create -f -o ashift=12 -O compression=lz4 -O xattr=sa -O mountpoint=none rootpool /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+sudo zfs create -V 10G rootpool/tempdisk
+sudo zfs create -o mountpoint=none rootpool/ROOT
+sudo zfs create -o mountpoint=/ rootpool/ROOT/$hostname
+sudo zpool export rootpool
+sudo zpool import rootpool -R /mnt
+sudo zfs create rootpool/ROOT/$hostname/boot
+sudo zfs create rootpool/ROOT/$hostname/etc
+sudo zfs create rootpool/ROOT/$hostname/home
+sudo zfs create rootpool/ROOT/$hostname/tmp
+sudo zfs create rootpool/ROOT/$hostname/usr
+sudo zfs create rootpool/ROOT/$hostname/var
+sudo zpool set bootfs=rootpool/ROOT/$hostname rootpool
+```
