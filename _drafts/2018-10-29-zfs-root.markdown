@@ -1,0 +1,95 @@
+---
+layout: post
+title:  "ZFS Root on Ubuntu 18.04"
+date:   2018-10-29 12:58:29
+categories: ZFS
+tags: 
+ - zfs
+ - zfsonlinux
+ - zfs-root
+ - filesystems
+ - storage
+ - ubuntu-18-04
+ - desktop
+---
+
+
+ZFS is typically used for non-root volumes, but for many situations, it's fully supported for root 
+volumes as well, allowing it to be used in many of the same ways that BSD uses it, running full system
+snapshots, full system restores and sends via `zfs send`, transparent compession, and the other
+many benefits of ZFS.
+
+While it is possible to migrate an existing system to ZFS root, this guide assumes a clean install.
+
+TODO : make this attribution cleaner.
+Based on this guide: https://furneaux.ca/wiki/Ubuntu_ZFS_Root
+
+## Start Live CD
+
+Boot into a live environment with the installer image you wish to install.
+
+Exit the installer, open a terminal.
+
+
+## Find Disk Info
+First, find the root device you wish to install on:
+
+```
+$ lsblk
+
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+loop0    7:0    0   1.6G  1 loop /rofs
+loop1    7:1    0  87.9M  1 loop /snap/core/5662
+loop2    7:2    0   236M  1 loop /snap/kde-frameworks-5/27
+sda      8:0    0 233.8G  0 disk 
+sdb      8:16   1  28.7G  0 disk /cdrom
+├─sdb1   8:17   1   1.7G  0 part 
+└─sdb2   8:18   1   2.3M  0 part
+```
+
+In the example above, your device is `/dev/sda`.
+
+Next, map your logical device name to it's physical name:
+
+```
+$ ls -lha /dev/disk/by-id
+
+total 0
+drwxr-xr-x 2 root root 160 Oct 29 16:56 .
+drwxr-xr-x 7 root root 140 Oct 29 16:56 ..
+lrwxrwxrwx 1 root root   9 Oct 29 16:56 ata-APPLE_SSD_SM0256G_S2Z5NY0J474795 -> ../../sda
+lrwxrwxrwx 1 root root   9 Oct 29 16:41 usb-APPLE_SD_Card_Reader_000000000820-0:0 -> ../../sdc
+lrwxrwxrwx 1 root root   9 Oct 29 16:41 usb-SanDisk_Ultra_4C530001110721100544-0:0 -> ../../sdb
+lrwxrwxrwx 1 root root  10 Oct 29 16:41 usb-SanDisk_Ultra_4C530001110721100544-0:0-part1 -> ../../sdb1
+lrwxrwxrwx 1 root root  10 Oct 29 16:41 usb-SanDisk_Ultra_4C530001110721100544-0:0-part2 -> ../../sdb2
+lrwxrwxrwx 1 root root   9 Oct 29 16:56 wwn-0x5002538900000000 -> ../../sda
+```
+
+Find the device name on the left side which points to your device found above. For us, it is
+`ata-WDC_WDS500G1B0A-00H9H0_170703801742`, which points to `/dev/sda/`.
+
+
+## Begin Disk Prep
+
+With the disk name found above, we will now setup the partitioning.
+
+First, we'll create the GPT partition table of the device we found. Replace everything 
+after `/by-id/` with your device name.
+
+
+```
+$ sudo sgdisk -o /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+
+Warning! Mismatched GPT and MBR partition! MBR partition 2, of type 0x83,
+has no corresponding GPT partition! You may continue, but this condition
+might cause data loss in the future!
+The operation has completed successfully.
+```
+
+You may see an error about mismatched partitions and data loss - this is 
+fine, as we are already deleting everything on the disk during install.
+
+  TODO: check to ensure that last paragraph is actually true, and issues
+        won't persist after install.
+
+
