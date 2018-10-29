@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Use this hook to run a build on every commit
+
 echo ""
 echo ""
 echo "Jekyll test build before commit"
