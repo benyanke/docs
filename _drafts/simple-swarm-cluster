@@ -1,0 +1,15 @@
+Docker Swarm Cluster with Ansible
+
+[link to ansible basics]
+
+
+## What is Docker Swarm
+
+Docker Swarm is the built-in orchestration tool provided by the Docker Developers. It
+provides a simpler interface than a full featured Kubernetes install, which brings much
+more complexity with it.
+
+Docker Swarm is built into the docker daemon, and does not require software addons.
+
+
+

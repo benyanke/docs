@@ -1,0 +1,109 @@
+title: Ansible Basics
+
+
+## What is Docker Swarm
+
+Docker Swarm is the built-in orchestration tool provided by the Docker Developers. It 
+provides a simpler interface than a full featured Kubernetes install, which brings much 
+more complexity with it.
+
+Docker Swarm is built into the docker daemon, and does not require software addons.
+
+## What is Ansible
+
+Ansible is a configuration management tool which can edit and maintain the configuration 
+on a distributed set of linux/unix hosts. Configuration occurs over ssh, so no 
+client-specific agent or configuration is (beyond providing python2 and password-free 
+sudo or root).
+
+Ansible does not have a specific server, it uses your existing SSH authentication methods.
+
+## Prepare your ansible management host
+
+Your ansible manager only requires 3 things, and can be run on a dedicated server, or on 
+an individual linux desktop.
+
+It requires:
+  - SSH access to the nodes being managed (including a user with no-password sudo)
+  - Ansible installed
+  - Ansible configuration files documenting the configuration you want to push
+
+
+Ansible can be installed many ways. On Ubuntu systems, simply run:
+
+```
+sudo apt update && sudo apt install -y ansible
+```
+
+## Hosts Example
+TODO: Fill in. Research inventory vs hosts
+
+## Playbook Example
+Ansible defines the desired configuration in a construct called `playbooks` - these are 
+YML files which define the required configuration for each node.
+
+A playbook then contains tasks and/or roles. Tasks are singular configuration options 
+which need to be run.
+
+Here is an example playbook with several tasks.
+
+```yml
+# This defines the set of hosts to run this playbook against
+- hosts: servers
+
+# This is an array of tasks to run, in order
+  tasks:
+
+    # This task elevates to root with sudo, and installs several PPA repos
+    # with_items is a loop construct, it runs the command once per item.
+    # It is using the "apt_repository" module provided by ansible.
+    - name: Install Additional apt repositories
+      become: yes
+      become_method: sudo
+      apt_repository: repo='{{item}}' state=present
+      with_items:
+        - "ppa:remmina-ppa-team/remmina-next"
+        - "ppa:x2go/stable"
+
+    # This command installs the packages listed in [vars.packages], also using
+    # sudo to elevate. It is using the "apt" module.
+    - name: Install apt packages
+      become: yes
+      become_method: sudo
+      apt:
+        state: present
+        name: "{{ packages }}"
+        update_cache: yes
+      vars:
+        packages:
+          - htop
+          - tree
+          - apache2
+
+```
+
+This playbook does the following actions:
+
+  * Connects to every ssh host provided in the [servers] host set
+  * Adds ppa repo `ppa:remmina-ppa-team/remmina-next` to the system
+  * Adds ppa repo `ppa:x2go/stable` to the system
+  * Installs `htop`, `tree`, and `apache2` from apt.
+
+More importantly, changes are made in an idempotent way, meaning that the ansible 
+playbook can be run repeatedly safely, and it will only update the system if it needs to 
+be.
+
+This means that if the playbook is run, then a user manually removes htop, then the 
+playbook is run again, ansible will only install htop, not add duplicate copies of the 
+ppa repos or other packages. This means that ansible can be run over time to ensure 
+configuration stays as expected across servers, minimalizing configuration drift.
+
+## Ansible Galaxy
+
+TODO: document ansible galaxy here
+
+
+## Running Playbooks
+
+TODO: Document ways to run playbooks.
+
