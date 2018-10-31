@@ -4,3 +4,6 @@ _site
 
 # Ignore nano tmp files
 .*.swp
+
+
+.jekyll-metadata
