@@ -32,7 +32,9 @@ It requires:
 Ansible can be installed many ways. On Ubuntu systems, simply run:
 
 ```
-sudo apt update && sudo apt install -y ansible
+sudo add-apt-repository ppa:ansible/ansible -y &&
+sudo apt update && 
+sudo apt install -y ansible
 ```
 
 ## Hosts Example
