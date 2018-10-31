@@ -12,7 +12,7 @@ docker run --rm \
     --volume="$PWD:/srv/jekyll" \
     --volume="/tmp/jekyll-bundle-cache:/usr/local/bundle" \
     jekyll/jekyll:3 \
-    jekyll build
+    jekyll build --incremental
 
 
 if [[ "$?" -ne "0" ]] ; then
