@@ -1,0 +1,15 @@
+This guide will detail how to backup a ZFS pool or dataset to an s3-compatible
+file storage system
+
+TODO: 
+  * Research/test zfs send/receive locally on LAN for testing
+  * Research/Test remote (s3) send-receive plaintext
+  * Research piping through encryption / decryption
+  * Research/test incremental runs in addition to the primary snapshots
+    * Also test recovery time of fetching all those snapshots, vs when to start fresh
+
+Tools to look at:
+  * Z3
+  * rclone
+  * syncoid
+  * duplicity
