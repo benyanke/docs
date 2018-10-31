@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "ZFS Root on Kubuntu 18.04"
+title:  "ZFS Root on Kubuntu"
 date:   2018-10-29 12:58:29
 categories: ZFS
 tags: 
@@ -9,8 +9,8 @@ tags:
  - zfs-root
  - filesystems
  - storage
- - ubuntu-18-04
- - kubuntu-18-04
+ - ubuntu
+ - kde-neon
  - desktop
 ---
 
@@ -21,7 +21,7 @@ ways that BSD uses it, running full system snapshots, full system restores and
 sends via `zfs send`, transparent compession, and the other many benefits of 
 ZFS.
 
-This guide should also work on 18.04-based versions of KDE neon.
+Note that this guide does NOT work on KDE Neon for the time being.
 
 While it is possible to migrate an existing system to ZFS root, this guide assumes a 
 clean install.
@@ -94,6 +94,8 @@ The operation has completed successfully.
 You may see an error about mismatched partitions and data loss - this is 
 fine, as we are already deleting everything on the disk during install.
 
+  TODO: Add step to delete everything off disk here, it'll get rid of error
+
   TODO: check to ensure that last paragraph is actually true, and issues
         won't persist after install.
 
@@ -139,13 +141,112 @@ Setup ZFS with the following steps. As usual, replace with your disk id. You can
 replace the hostname var, which will name the dataset the same as the system's hostname,
 to make management more easy later.
 
-Note: currently breaking here because the ZFS kernel module is not loaded. Debug this before continuing.
+Start by opening a *root* shell with `sudo su`, then run:
 
 ```
 hostname="SET SYSTEM HOSTNAME HERE"
-sudo apt update
-sudo apt install -y zfsutils-linux
-sudo modprobe zfs
+apt update
+apt install -y zfsutils-linux
+zpool create -f -o ashift=12 -O compression=lz4 -O xattr=sa -O mountpoint=none rootpool /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+zfs create -V 10G rootpool/tempdisk
+zfs create -o mountpoint=none rootpool/ROOT
+zfs create -o mountpoint=/ rootpool/ROOT/$hostname
+zpool export rootpool
+zpool import rootpool -R /mnt
+zfs create rootpool/ROOT/$hostname/boot
+zfs create rootpool/ROOT/$hostname/etc
+zfs create rootpool/ROOT/$hostname/home
+zfs create rootpool/ROOT/$hostname/tmp
+zfs create rootpool/ROOT/$hostname/usr
+zfs create rootpool/ROOT/$hostname/var
+zpool set bootfs=rootpool/ROOT/$hostname rootpool
+```
+
+
+TODO: THis step may be wrong, used sd0 device
+
+## Install Kubuntu
+
+Now, install Kubuntu on the /dev/zd0 device (a loopback image file). Do not reboot after install.
+The installer may crash during bootloader install. This is subpar but fine.
+
+## Moving Installed System to ZFS Root
+
+After install, copy the data from the tmp partition to the zfs pool
+
+```
+mkdir /media/temp &&
+mount /dev/zd0p1 /media/temp &&
+rsync -aAXvH /media/temp/* /mnt --exclude={/dev/*,/proc/*,/sys/*,/tmp/*,/run/*,/mnt/*,/media/*,/lost+found}
+
+```
+
+Next, setup the shell to switch running from the mnt dir, so that the ZFS initramfs and grub
+can be installed into the copied system.
+```
+for i in /dev /dev/pts /proc /sys /run; do mount -B $i /mnt$i; done
+chroot /mnt
+apt install zfs-initramfs -y
+grub-install /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+```
+
+## Misc Cleanup
+Remove any entries in /etc/fstab referencing the previous temporary root filesystem (ext4). Comment 
+out those lines.
+
+Add "boot=zfs" to /etc/default/grub in GRUB_CMDLINE_LINUX.
+
+Next, run:
+```
+update-grub
+exit
+for i in /dev/pts /dev /proc /sys /run; do umount /mnt$i; done
+umount /media/temp
+```
+
+
+## Remove Tmp Dataset
+
+Finally, reemove the tmp dataset, snapshot the clean install, and export the pool.
+
+Reboot.
+
+
+
+## Alternate steps:
+
+https://github.com/zfsonlinux/zfs/wiki/Ubuntu-18.04-Root-on-ZFS
+
+
+### Install
+sudo apt-add-repository universe -y
+sudo apt install --yes debootstrap gdisk zfs-initramfs
+
+
+### Clear Disk
+
+sgdisk --zap-all /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+
+
+
+### Setup partitions (UEFI)
+sgdisk     -n3:1M:+512M -t3:EF00 /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+sgdisk     -n1:0:0      -t1:BF01 /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+
+
+### Create Pool - NOT USED
+
+
+zpool create -o ashift=12 \
+      -O atime=off -O canmount=off -O compression=lz4 -O normalization=formD \
+      -O xattr=sa -O mountpoint=/ -R /mnt \
+      rpool /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
+
+
+### Create Pool - Using
+
+
+export hostname="by-mac"
 sudo zpool create -f -o ashift=12 -O compression=lz4 -O xattr=sa -O mountpoint=none rootpool /dev/disk/by-id/ata-APPLE_SSD_SM0256G_S2Z5NY0J474795
 sudo zfs create -V 10G rootpool/tempdisk
 sudo zfs create -o mountpoint=none rootpool/ROOT
@@ -159,5 +260,4 @@ sudo zfs create rootpool/ROOT/$hostname/tmp
 sudo zfs create rootpool/ROOT/$hostname/usr
 sudo zfs create rootpool/ROOT/$hostname/var
 sudo zpool set bootfs=rootpool/ROOT/$hostname rootpool
-```
 
