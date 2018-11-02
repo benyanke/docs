@@ -1,4 +1,29 @@
+title: Simple Disk Benchmarks
+
+There are a number of benchmarking tools available to benchmark linux disks.
+
+## hdparm
+
+This can benchmark the read speed on a disk even if it's not partitioned, 
+being used in a ZFS pool, or otherwise not mounted as a filesystem.
+
+```
+$ sudo hdparm -t /dev/sdX
+```
+
+
+## dd
+
+dd is a simple tool which reads and writes various data.
+
+Below is a simple script which reads and writes to a test file on a 
+filesystem you'd like to test.
+
+```bash
 #!/bin/bash
+
+# Don't start if the file already exists - you don't want to
+# overwrite an existing file
 
 testfile="/tank/tmp/testfile"
 
@@ -19,7 +44,4 @@ echo ""
 dd count=1k bs=1M of=/dev/null if="$testfile"
 
 rm "$testfile"
-
-
-
-also hdparm
+```
