@@ -1,0 +1,48 @@
+Title: Setting up Pass
+
+
+`pass`, the standard unix password manager, is a simple shell script that 
+provides an interface to easily store and access files encrypted with 
+GPG, in a secure password vault.
+
+`pass` uses `gpg` (an implementation of the pgp encryption protocol) to 
+encrypt and decrypt your files, so you can access them with any tool 
+which decrypts with your GPG keys, not just the `pass` tool. You can sync 
+the password vault using any tool, or you can use git, which is 
+integrated with `pass`, to provide automatic syncing between devices.
+
+There are several other tools you can use to manage your pass database:
+
+  * [qtpass](https://qtpass.org) - a desktop gui pass tool providing full 
+    GUI management of the vault
+  * [gopass](https://github.com/gopasspw/gopass) - a replacement for 
+    `pass` with some additional features like search and coloring
+  * `gpg` - you can directly decrypt your password files using `gpg`, 
+    without any wrapper. This can be useful for building your own scripts 
+    or tooling.
+
+
+## Setting up your GPG key
+
+First, you need to create your GPG key. You can skip this step if you 
+already have a GPG key you would like to use.
+
+
+TODO: Document setting up GPG here
+
+TODO: Document gpg backups
+
+TODO: Document gpg security
+
+## Setting up `pass`
+
+TODO: Document setting up pass
+
+## Using `pass`
+
+TODO: Document common tasks in pass 
+  - viewing
+  - adding
+  - removing
+  - clipboard
+  - backup / syncing pass
