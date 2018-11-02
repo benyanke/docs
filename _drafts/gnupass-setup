@@ -27,6 +27,38 @@ There are several other tools you can use to manage your pass database:
 First, you need to create your GPG key. You can skip this step if you 
 already have a GPG key you would like to use.
 
+First, generate your key:
+
+```
+$ gpg --gen-key
+```
+
+You will see a number of options. Generally, they are clear on 
+their own, but here are the options you should check that may not be clear:
+
+  * Select "DSA and RSA" key type
+  * Create a 4096 bit key
+  * Expiration - generally set to 0 (none) if you're not sure. Read 
+    more below.
+
+You'll then enter your name, email, password, and allow the key to 
+generate. After you enter the password, it may take a while. Once 
+the entropy is generated, the key generation is complete. The 
+password must be secure, it is embedded in your key, used to 
+encrypt it.
+
+Finally, your key is stored in ~/.gnupg.
+
+
+TODO: Document pinetry options:
+ - sudo nano ~/.gnupg/gpg-agent.conf
+ - pinentry-program /usr/bin/pinentry-curses
+  - OR:
+ - pinentry-program /usr/bin/pinentry-qt
+
+
+TODO: Document expiration selection. TLDR: if you don't know what 
+you're doing, never expire.
 
 TODO: Document setting up GPG here
 
@@ -36,13 +68,54 @@ TODO: Document gpg security
 
 ## Setting up `pass`
 
-TODO: Document setting up pass
+Now that you have a key, either an older key, or one generated above, you can set up your pass vault.
+
+First, list your keys using the gpg command:
+```
+$ gpg --list-secret-keys
+/home/johndoen/.gnupg/secring.gpg
+----------------------------------
+sec   4096R/12345678 2018-11-02
+uid                  John Doe (Comment) <jdoe@example.com>
+ssb   4096R/12345678 2018-11-02
+```
+
+Your key is identified by the email (in this case, 
+jdoe@example.com). Use this identifer to create your pass database, 
+adding the key identifier to the end of the command.
+
+```
+$ pass init jdoe@example.com
+mkdir: created directory '/home/johndoe/.password-store/'
+Password store initialized for jdoe@example.com
+```
+
+Your password store has now been created at the path shown in the 
+command output. You can now back up this directory, or sync it 
+around, if you don't use the git option.
 
 ## Using `pass`
 
+Passwords in `pass` are stored in a directory-like tree. 
+
+**Viewing All Passwords**
+
+You can view the entire tre
 TODO: Document common tasks in pass 
   - viewing
   - adding
   - removing
   - clipboard
   - backup / syncing pass
+
+## Using `gopass`
+
+As discussed above, gopass is an alternative which can be used to 
+access the database. 
+
+If you have the golang toolchain installed, you can simply install by running:
+
+```
+$ go get github.com/gopasspw/gopass
+```
+
