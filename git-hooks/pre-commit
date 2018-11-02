@@ -24,3 +24,21 @@ if [[ "$?" -ne "0" ]] ; then
   exit 1
 fi
 
+
+
+# Finally, check to ensure that no published posts have have "TODO: " items left, indicating unfinished posts.
+
+# grep "TODO" "$PWD/_posts" -R
+grep "TODO" "$PWD/_posts" -R &> /dev/null
+
+if [[ "$?" -ne "1" ]] ; then
+  echo ""
+  echo ""
+  echo "Not all published posts are complete: the following posts have \"TODO:\" in them, indicating unfinished work."
+  grep "TODO:" "$PWD/_posts" -R -l | uniq
+  echo ""
+  echo ""
+  exit 1
+fi
+
+
