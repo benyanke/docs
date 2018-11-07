@@ -45,3 +45,27 @@ dd count=1k bs=1M of=/dev/null if="$testfile"
 
 rm "$testfile"
 ```
+
+
+
+
+Another tool:
+
+generate.sh:
+for i in $(seq 1 $NUMBER); do dd if=/dev/urandom of=$TARGET/file_$i bs=$SIZE count=$COUNT 2>&1 | grep -v records done
+
+Uses:
+#### Creating 10240 files of 100k 
+export NUMBER=10240 export TARGET=`pwd`/100k export SIZE=100K sh generate.sh > 100k.log   
+
+#### Creating 1024 files of 1M 
+export NUMBER=1024 export TARGET=`pwd`/1M export SIZE=1M sh generate.sh > 1M.log   
+
+#### Creating 100 files of 10M 
+export NUMBER=100 export TARGET=`pwd`/10M export SIZE=10M sh generate.sh > 10M.log   
+
+#### Creating 10 files of 100M 
+export NUMBER=10 export COUNT=100 export TARGET=`pwd`/100M export SIZE=1M sh generate.sh > 100M.log   
+
+#### Creating 1 file of 1G 
+export NUMBER=1 export TARGET=`pwd`/1G export SIZE=1M export COUNT=1024 sh generate.sh > 1G.log  
