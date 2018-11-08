@@ -82,3 +82,13 @@ user.
 
 You're done and ready to run VMs. There are many management tools available for KVM, 
 including `virsh` (terminal), `virt-manager` (GUI), and a host of web based tools.
+
+## Networking
+
+By default, VMs will exist on a NAT network on the host - that is - they have internet 
+access, but are not easily accessable from outside the host.
+
+Most configurations use a bridge network - Checkout the next guide to set this up:
+
+_[Install KVM Bridge Network]({{ site.baseurl }}{% post_url kvm/2018-10-10-bridge-network %})_
+
