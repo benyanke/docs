@@ -10,7 +10,6 @@ tags:
  - virtual machine
  - hypervisor
  - ubuntu-18-04
-published: false
 ---
 
 KVM stands for Kernel Virtual Machine, a hypervisor which runs on Linux servers. This 
