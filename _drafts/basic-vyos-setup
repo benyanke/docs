@@ -14,7 +14,41 @@ standard consumer edge router with a far more powerful device.
 
 TODO: Finish each of these sections
 
+TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
+
+
+## Configure Mode
+
+TODO: Document the different modes and commands to change modes.
+
+
 ## User Accounts
+
+You should have set a password during installation and setup for the `vyos` user.
+
+You can also add additional users using the following two commands. The user 
+is being created with the following details:
+
+ * username: jsmith
+ * Full name: John Smith
+ * Password: mypassword
+
+
+```
+set system login user jsmith full-name "Johan Smith"
+set system login user jsmith authentication plaintext-password mypassword
+commit
+```
+
+Additionally, you can delete users (such as the default `vyos` user) by 
+running the following command. Note that you can not delete the currently 
+logged in user.
+
+```
+delete system login user [username]
+commit
+```
+
 
 ## SSH Keys
 
