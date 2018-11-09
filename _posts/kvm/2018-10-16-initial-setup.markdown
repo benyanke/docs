@@ -71,10 +71,10 @@ sudo usermod -aG libvirt [username]
 
 This will not take affect until after the user's session is restarted.
 
-The user can check their own groups by simply running `group`, which outputs the groups 
+The user can check their own groups by simply running `groups`, which outputs the groups 
 that the user is part of.
 
-Additionally, you can run `group [username]` to check the group membership of another 
+Additionally, you can run `groups [username]` to check the group membership of another 
 user.
 
 
