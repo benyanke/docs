@@ -9,3 +9,4 @@ Jekyll Page Repo
  * Redesign
  * Add better category handling
  * Write about page
+ * Look at switching to Hugo (would require travisCI for builds)
