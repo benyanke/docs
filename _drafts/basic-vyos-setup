@@ -14,6 +14,10 @@ standard consumer edge router with a far more powerful device.
 
 TODO: Finish each of these sections
 
+## User Accounts
+
+## SSH Keys
+
 ## Interface Setup
 
 ## Internal NAT  (src nat)
@@ -25,3 +29,31 @@ TODO: Finish each of these sections
 ## DHCP Server for Internal Clients
 
 ## Multiple Subnets
+
+## Switch Networks
+
+You're now configured! Switch your network interfaces and test to ensure it works as expected!
+
+
+
+
+## Bonus Sections / advanced
+
+The things found below are not strictly required for a basic router, but many power 
+users may find them useful for their work.
+
+## Scripting
+
+## Email Alerting with Scripts
+
+## Scheduling Scripts
+
+## Ansible Configuration Management
+
+## Logging
+
+## Auditing Connections
+
+## Quality of Service (QOS)
+
+
