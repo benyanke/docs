@@ -1,0 +1,1 @@
+flock -n /lockfilename [process]

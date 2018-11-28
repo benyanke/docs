@@ -1,0 +1,49 @@
+Sometimes, it can be useful to set up a server as a remote-desktop 
+instance. However, most server providers don't allow the default
+setup of desktop versions of linux.
+
+This guide will document how to take an Ubuntu Server install and
+install a desktop environment and remote access tool.
+
+First, ensure the packages are up to date:
+
+```
+sudo apt update && sudo apt -y dist-upgrade && sudo apt autoremove -y
+```
+
+Next, reboot the server to apply the new kernel version, if there 
+were any upgrades.
+
+
+We will now install the Mate desktop environment, a lightweight desktop 
+well suited to remote access:
+
+```
+sudo apt install -y ubuntu-mate-desktop
+```
+
+
+
+Finally, install X2go, as documented HERE. TODO: add link
+
+
+
+
+Alternatively, use the following user data script when you provision your 
+VM, assuming your provider supports them:
+
+TODO: TEST THIS
+```
+#!/bin/bash
+
+apt update && 
+apt -y dist-upgrade && 
+apt autoremove -y &&
+apt install ubuntu-mate-desktop -y &&
+apt-add-repository ppa:x2go/stable -y &&
+apt install -y x2goserver x2goserver-xsession &&
+apt install -y x2gomatebindings
+```
+
+
+Finally, you can SSH into your server, or use x2go to remotely access it's desktop.
