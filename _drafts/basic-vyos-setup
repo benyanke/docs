@@ -1,0 +1,95 @@
+VyOS is a linux-based CLI-only router distribution. It is designed to act as a router 
+appliance, offering complex enterprise-grade routing and switching features to anyone
+for free.
+
+It is based on a modifed Debian base, so can run anywhere Debian would run. It is 
+suitable for both physical installations - prefered for production uses - as well as 
+virtual installs - good for testing and VM networking.
+
+This guide will document the steps required to take a clean VyOS install and set up the 
+basic functions required to use it as a router at the edge of a test or residential 
+network, including NAT, port forwarding, DHCP client function for the external IP, DHCP 
+server functions for internal networking. With these functions, you can replace any 
+standard consumer edge router with a far more powerful device.
+
+TODO: Finish each of these sections
+
+TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
+
+
+## Configure Mode
+
+TODO: Document the different modes and commands to change modes.
+
+
+## User Accounts
+
+You should have set a password during installation and setup for the `vyos` user.
+
+You can also add additional users using the following two commands. The user 
+is being created with the following details:
+
+ * username: jsmith
+ * Full name: John Smith
+ * Password: mypassword
+
+
+```
+set system login user jsmith full-name "Johan Smith"
+set system login user jsmith authentication plaintext-password mypassword
+commit
+```
+
+Additionally, you can delete users (such as the default `vyos` user) by 
+running the following command. Note that you can not delete the currently 
+logged in user.
+
+```
+delete system login user [username]
+commit
+```
+
+
+## SSH Keys
+
+## Interface Setup
+
+## Internal NAT  (src nat)
+
+## Port Forwarding (dst nat)
+
+## DHCP Client for Public IP
+
+## DHCP Server for Internal Clients
+
+## Multiple Subnets
+
+## Switch Networks
+
+You're now configured! Switch your network interfaces and test to ensure it works as expected!
+
+
+
+
+## Bonus Sections / advanced
+
+The things found below are not strictly required for a basic router, but many power 
+users may find them useful for their work.
+
+## Scripting
+
+## Email Alerting with Scripts
+
+## Scheduling Scripts
+
+## Ansible Configuration Management
+
+## Logging
+
+## Auditing Connections
+
+## Quality of Service (QOS)
+
+## Enable Serial Backup
+
+## SNMP

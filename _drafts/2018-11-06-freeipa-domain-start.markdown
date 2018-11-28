@@ -8,8 +8,14 @@ tags:
  - domain
  - ldap
  - authentication
+ - free-ipa
  - ubuntu-18-04
 ---
+
+
+based on https://www.freeipa.org/page/Quick_Start_Guide
+https://computingforgeeks.com/how-to-configure-freeipa-client-on-ubuntu-18-04-ubuntu-16-04-centos-7/
+
 
 FreeIPA is an alternative to the **Windows Active Directory** system. It provides a 
 number of advantages, including centralization of:
