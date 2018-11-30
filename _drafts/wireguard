@@ -28,9 +28,10 @@ is installed.
 First, generate keys on all peers (hosts), both the client and server. Every time this 
 is run, a new keypair is generated.
 
+Open a shell in a new directory dedicated to wireguard (for example, `~/wg`), and run:
+
 ```bash
-$ touch privatekey
-$ chmod 600 privatekey
+$ umask 077
 $ wg genkey > privatekey
 ```
 
@@ -58,4 +59,10 @@ $ cat publickey
 pcBkksNtTvHGoCzP3Dkfxs5MnxdUxHET/r5dg5CeqX0=
 $ cat privatekey
 oFdvW044aCWV8rPtPKAzudIW1GKws9oSUFTk4ydXuEc=
+```
+
+Finally, you can run all the steps above in a shortend command like so:
+
+```bash
+$ umask 077 && wg genkey | tee privatekey | wg pubkey > publickey
 ```
