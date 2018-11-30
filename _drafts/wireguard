@@ -1,4 +1,17 @@
 https://www.wireguard.com/install/
+https://www.wireguard.com/quickstart/
+
+## Terms
+
+TODO: Document these terms:
+
+ * peer - every user is a peer, both clients and servers.
+ * private/public key pair
+
+
+## Install
+
+Start by installing the wireguard package.
 
 ```bash
 sudo add-apt-repository ppa:wireguard/wireguard -y &&
@@ -6,3 +19,43 @@ sudo apt-get update &&
 sudo apt-get install -y wireguard
 ```
 
+You now have WireGuard installed. Run `which wg` to confirm that you have the `wg` 
+commandline tool installed. It should return a path to a file. If it returns a path, it 
+is installed.
+
+## Setup
+
+First, generate keys on all peers (hosts), both the client and server. Every time this 
+is run, a new keypair is generated.
+
+```bash
+$ touch privatekey
+$ chmod 600 privatekey
+$ wg genkey > privatekey
+```
+
+This will create an empty file, set to safe permissions (not readable by anyone else), 
+then generate the keypair for the host, and store the private key in the file.
+
+This file MUST be kept secure. 
+
+Next, pipe this file back into the tool to find the private key's corresponding public 
+key. You can print ot to the screen, or store it to a file.
+
+```bash
+# Print public key to screen
+$ wg pubkey < privatekey
+
+# Print public key to file
+$ wg pubkey < privatekey > publickey
+```
+
+The public and private keypairs are 45-character random-looking strings. Here is an 
+example of a valid public/private keypair:
+
+```bash
+$ cat publickey
+pcBkksNtTvHGoCzP3Dkfxs5MnxdUxHET/r5dg5CeqX0=
+$ cat privatekey
+oFdvW044aCWV8rPtPKAzudIW1GKws9oSUFTk4ydXuEc=
+```
