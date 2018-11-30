@@ -1,0 +1,8 @@
+https://www.wireguard.com/install/
+
+```bash
+sudo add-apt-repository ppa:wireguard/wireguard -y &&
+sudo apt-get update &&
+sudo apt-get install -y wireguard
+```
+
