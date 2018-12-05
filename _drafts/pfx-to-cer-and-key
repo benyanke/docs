@@ -1,0 +1,24 @@
+PFX files contain both the key and the certificate. To use on linux servers, you must extract 
+these into distinct files.
+
+
+First, extract reencrypt the key into it's own file.
+
+```
+$ openssl pkcs12 -in [certificate.pfx] -nocerts -out [keyfile-encrypted.key]
+```
+
+You will be requested a password for decryption, as well as asked a password twice during reencryption.
+
+
+Next, extract the certificate into it's own file.
+
+```
+$ openssl pkcs12 -in [certificate.pfx] -clcerts -nokeys -out [certificate.crt]
+```
+
+Finally, you can optionally store the keyfile in a decrypted manner. Note that this can have 
+security implications, as anyone who has access to the file now has full access to the key with no 
+further protection. However, if the key remains encrypted, any service using it must request a 
+password before it can start up. In many situations, such as a webserver which might reboot 
+without user interaction, this can be unacceptable, and a decrypted key must be used.
