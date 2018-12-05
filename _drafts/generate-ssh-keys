@@ -1,0 +1,4 @@
+ssh-keygen -t rsa -C "byanke@pcnametag.com"
+
+Filename: a clear descriptor of your key. Ex: "byanke-personal-key"
+Password: either provide a password, or press enter typing nothing to store without a password
