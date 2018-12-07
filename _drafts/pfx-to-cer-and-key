@@ -15,12 +15,35 @@ Next, extract the certificate into it's own file.
 
 ```
 $ openssl pkcs12 -in [certificate.pfx] -clcerts -nokeys -out [certificate.crt]
-# TODO: TEST TO ENSURE THIS DOES WHAT IT NEEDS TO
-$ openssl pkcs12 -in [certificate.pfx] -cacerts -nokeys --chain -out [ca-certbundle.crt]
 ```
+
 
 Finally, you can optionally store the keyfile in a decrypted manner. Note that this can have 
 security implications, as anyone who has access to the file now has full access to the key with no 
 further protection. However, if the key remains encrypted, any service using it must request a 
 password before it can start up. In many situations, such as a webserver which might reboot 
 without user interaction, this can be unacceptable, and a decrypted key must be used.
+
+To store the key unencrypted, run:
+
+```
+$ openssl rsa -in [keyfile-encrypted.key] -out [keyfile-decrypted.key]
+```
+
+## Make CA Bundle
+
+For some servers like Traefik, you may need to add the ca cert chain to the end of the main cert.
+
+First, extract the full CA chain from the PFX file:
+```
+$ openssl pkcs12 -in [certificate.pfx] -cacerts -nokeys --chain -out [ca-certbundle.crt]
+```
+
+Then combine with the main certificate for a combined cert and ca bundle.
+```
+$ cat certificate.crt > ca-cert-combined.crt
+$ cat ca-certbundle.crt >> ca-cert-combined.crt
+```
+
+The file `ca-cert-combined.crt` now contains both the ca bundle as well as our cert, and can be used as
+a certificate (alongside the keyfile) to serve TLS connections.
