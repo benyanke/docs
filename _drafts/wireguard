@@ -66,3 +66,17 @@ Finally, you can run all the steps above in a shortend command like so:
 ```bash
 $ umask 077 && wg genkey | tee privatekey | wg pubkey > publickey
 ```
+
+## Create Interface
+
+TODO: flesh this out:
+ip link add dev wg0 type wireguard
+ip address add dev wg0 10.10.200.0/24
+
+
+wg set wg0 listen-port 51820 private-key /home/user/wg/privatekey peer ABCDEF... allowed-ips 192.168.88.0/24 endpoint 209.202.254.14:8172
+OR 
+wg setconf wg0 myconfig.conf
+
+
+ip link set up dev wg0

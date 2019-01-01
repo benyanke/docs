@@ -1,0 +1,23 @@
+Steps:
+
+1) install wireguard
+2) enable ip forwarding
+3) create subnet for clients
+4) create routing rules on host
+5) create routing rules on router
+
+
+# https://lwn.net/Articles/748582/
+
+    # ip link add wg0 type wireguard
+    # ip addr add 10.0.0.1/24 wg0
+    # wg set wg0 private-key <private-key-file>
+    # ip link set wg0 up
+
+
+
+
+# https://www.wireguard.com/quickstart/
+
+# Another guide to look at:
+# https://www.ckn.io/blog/2017/11/14/wireguard-vpn-typical-setup/
