@@ -1,0 +1,9 @@
+
+
+```
+sudo apt install -y nfs-common
+```
+
+```
+sudo mount example.hostname.com:/ubuntu /local/ubuntu
+```
