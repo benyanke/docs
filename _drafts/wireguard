@@ -111,6 +111,10 @@ other words, the range of IPs the client is allowed to use for themselves.
 ```
 [Interface]
 Address = 10.10.200.1/24
+# TODO: TEST THE POST* OPTIONS
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o IFACE -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o IFACE -j MASQUERADE
+
 SaveConfig = true
 PrivateKey = <insert server_private_key>
 ListenPort = 51820
@@ -226,16 +230,7 @@ TODO: This one may be optional
 $ sudo iptables -A INPUT -p udp -m udp --dport 51820 -m conntrack --ctstate NEW -j ACCEPT
 ```
 
-Allow DNS traffic
-
-```bash
-$ sudo iptables -A INPUT -s 10.10.200.0/24 -p tcp -m tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-$ sudo iptables -A INPUT -s 10.10.200.0/24 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-```
-
-
 Allow forwarding of packets that stay in tunnel:
-
 
 ```bash
 $ sudo iptables -A FORWARD -i wg0 -o wg0 -m conntrack --ctstate NEW -j ACCEPT
