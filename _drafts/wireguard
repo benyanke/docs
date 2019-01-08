@@ -1,5 +1,9 @@
+Based on:
+
 https://www.wireguard.com/install/
 https://www.wireguard.com/quickstart/
+https://www.ckn.io/blog/2017/11/14/wireguard-vpn-typical-setup/
+
 
 ## Terms
 
@@ -14,9 +18,9 @@ TODO: Document these terms:
 Start by installing the wireguard package.
 
 ```bash
-sudo add-apt-repository ppa:wireguard/wireguard -y &&
-sudo apt-get update &&
-sudo apt-get install -y wireguard
+$ sudo add-apt-repository ppa:wireguard/wireguard -y &&
+$ sudo apt-get update &&
+$ sudo apt-get install -y wireguard
 ```
 
 You now have WireGuard installed. Run `which wg` to confirm that you have the `wg` 
@@ -61,22 +65,180 @@ $ cat privatekey
 oFdvW044aCWV8rPtPKAzudIW1GKws9oSUFTk4ydXuEc=
 ```
 
-Finally, you can run all the steps above in a shortend command like so:
+This needs to be done for both the client and server. 
+
+Generate the server keys *on the server*:
 
 ```bash
-$ umask 077 && wg genkey | tee privatekey | wg pubkey > publickey
+$ umask 077 && wg genkey | tee server_private_key | wg pubkey > server_public_key
 ```
 
-## Create Interface
 
-TODO: flesh this out:
-ip link add dev wg0 type wireguard
-ip address add dev wg0 10.10.200.0/24
+And do the same for client keys *on the client*:
 
+```bash
+$ umask 077 && wg genkey | tee client_private_key | wg pubkey > client_public_key
+```
 
-wg set wg0 listen-port 51820 private-key /home/user/wg/privatekey peer ABCDEF... allowed-ips 192.168.88.0/24 endpoint 209.202.254.14:8172
-OR 
-wg setconf wg0 myconfig.conf
+Finally, transfer the public key of both the client and the server to each other, while leaving the private keys securely on their own system.
 
 
-ip link set up dev wg0
+## Network Details
+
+We will create the setup with the following details:
+
+ * client subnet: 10.10.200.0/24
+ * client subnet gateway: 10.10.200.1
+ * interface name: wg0
+ * client ip: 10.10.200.10
+
+
+## Create Server Configuration
+
+Ensure the permissions are secure, not readable by non-privlidged users, since the file contains the private key.
+
+```bash
+$ sudo mkdir -p /etc/wireguard && sudo touch /etc/wireguard/wg0.conf
+$ sudo chown root:root /etc/wireguard/wg0.conf
+$ sudo chmod 600 /etc/wireguard/wg0.conf
+```
+
+Open up the file `/etc/wireguard/wg0.conf` and write the content, adjusting as needed.
+
+`AllowedIPs` lists the routes which should be set to send traffic back to the client - in 
+other words, the range of IPs the client is allowed to use for themselves.
+
+```
+[Interface]
+Address = 10.10.200.1/24
+SaveConfig = true
+PrivateKey = <insert server_private_key>
+ListenPort = 51820
+
+[Peer]
+PublicKey = <insert client_public_key>
+AllowedIPs = 10.10.200.2/32
+```
+
+## Create Client Configuration
+
+A similar process is repeated for the client.
+
+As before, set permissions securely first:
+
+```bash
+$ sudo mkdir -p /etc/wireguard && sudo touch /etc/wireguard/wg0.conf
+$ sudo chown root:root /etc/wireguard/wg0.conf
+$ sudo chmod 600 /etc/wireguard/wg0.conf
+```
+
+Open up the file `/etc/wireguard/wg0.conf` and write the content, adjusting as needed.
+
+Note that `AllowedIPs` are the allowed addresses a client can claim as their own address. Setting
+to `0.0.0.0/0` routes all traffic, or you can route private lan traffic with a route like `192.168.0.0/16`.
+
+```
+[Interface]
+Address = 10.10.200.2/32
+PrivateKey = <insert client_private_key>
+DNS = 10.200.200.1
+
+[Peer]
+PublicKey = <insert server_public_key>
+Endpoint = <insert vpn_server_address>:51820
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 21
+```
+
+
+## Creating Interfaces
+
+The following command uses our config file. Run this on both the server and client to 
+create the interface on each, based on the configuration created above:
+
+```bash
+$ sudo wg-quick up wg0
+```
+
+You should recieve an output that looks like:
+
+```
+[#] ip link add wg0 type wireguard
+[#] wg setconf wg0 /dev/fd/63
+[#] ip address add 10.10.200.1/24 dev wg0
+[#] ip link set mtu 1420 up dev wg0
+```
+
+This is the listing of commands which were run by `wg-quick` on your behalf.
+
+
+Optionally, you can set it to run at boot. This would typically be done on the server, but can 
+also be done on the client as well if that is the desired behavior.
+
+```bash
+$ sudo systemctl enable wg-quick@wg0.service 
+```
+
+## Enable Forwarding and Routing on Server
+
+At the moment, you can now access the server. However, you likely want to access the network the server is 
+connected to as well.
+
+On the server, do the following steps to allow the server to act as a router and forward packets.
+
+First, edit/add the following line in /etc/sysctl.conf
+
+
+```
+net.ipv4.ip_forward=1
+```
+
+Next, you can run the following commands to apply the change without rebooting.
+
+```bash
+$ sudo su
+# sysctl -p
+# echo 1 > /proc/sys/net/ipv4/ip_forward
+$ exit
+```
+
+
+
+## IPTables Magic
+
+A few iptables rules on the server to get things working properly.
+
+TODO: Test and debug these. copied from one of the guides above, but not yet tested or sure if even needed.
+
+
+Track vpn connections:
+
+```bash
+$ sudo iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+$ sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+```
+
+Allow incoming VPN traffic (may need to change `dport` based on your public port)
+
+TODO: This one may be optional
+
+```bash
+$ sudo iptables -A INPUT -p udp -m udp --dport 51820 -m conntrack --ctstate NEW -j ACCEPT
+```
+
+Allow DNS traffic
+
+```bash
+$ sudo iptables -A INPUT -s 10.10.200.0/24 -p tcp -m tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+$ sudo iptables -A INPUT -s 10.10.200.0/24 -p udp -m udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+```
+
+
+Allow forwarding of packets that stay in tunnel:
+
+
+```bash
+$ sudo iptables -A FORWARD -i wg0 -o wg0 -m conntrack --ctstate NEW -j ACCEPT
+```
+
+
