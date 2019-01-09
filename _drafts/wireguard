@@ -124,6 +124,14 @@ PublicKey = <insert client_public_key>
 AllowedIPs = 10.10.200.2/32
 ```
 
+## Install Resolvconf
+
+If you are using the DNS option above, also run:
+
+```bash
+$ sudo apt update && sudo apt install resolvconf -y
+```
+
 ## Create Client Configuration
 
 A similar process is repeated for the client.
