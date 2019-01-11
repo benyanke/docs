@@ -114,17 +114,26 @@ other words, the range of IPs the client is allowed to use for themselves.
 ```
 [Interface]
 Address = 10.10.200.1/24
-# TODO: TEST THE POST* OPTIONS
-PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o IFACE -j MASQUERADE
+# TODO  - figure out why the heck this is needed. also see if down needs undo rules for cmd#3 and beyond
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o IFACE -j MASQUERADE; iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -i wg0 -o wg0 -m conntrack --ctstate NEW -j ACCEPT;iptables -t nat -A POSTROUTING -s 10.10.200.0/24 -o ens8 -j MASQUERADE;
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o IFACE -j MASQUERADE
 
-SaveConfig = true
+SaveConfig = false
+
 PrivateKey = <insert server_private_key>
 ListenPort = 51820
 
+# TODO: ensure the multi-peer stuff works
+
+# Comment for first peer
 [Peer]
-PublicKey = <insert client_public_key>
-AllowedIPs = 10.10.200.2/32
+PublicKey = <insert peer1 client_public_key>
+AllowedIPs = 10.10.200.10/32
+
+# Comment for second peer
+[Peer]
+PublicKey = <insert peer2 client_public_key>
+AllowedIPs = 10.10.200.11/32
 ```
 
 ## Install Resolvconf
