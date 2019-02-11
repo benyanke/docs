@@ -56,7 +56,7 @@ To begin setup, run `enable` with password `enable` to use elevated privileges.
 ```
 (ArubaS2500-48T) >enable
 Password:******
-```
+
 (ArubaS2500-48T) #configure terminal 
 Enter Configuration commands, one per line. End with CNTL/Z
 ```
@@ -77,7 +77,6 @@ Now, log in with your new account: "admin" -> your password you selected.
 User: admin
 Password: ***************
 (ArubaS2500-48T) >
-
 ```
 
 If you see the `(...) >` prompt, you are now logged in with your new login account.
