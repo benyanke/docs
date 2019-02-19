@@ -1,0 +1,4 @@
+for LETTER in {A..Z} ; do 
+  rsync --size-only --delete --no-perms --no-owner --no-group --ignore-errors -avP /source/path/$LETTER* /destination/path/;
+  sleep 5;
+done;
