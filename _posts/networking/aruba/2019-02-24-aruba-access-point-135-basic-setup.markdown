@@ -10,7 +10,7 @@ tags:
  - hpe
  - switch
  - basic-configuration
-draft: true
+published: false
 ---
 
 _This guide was written with the Aruba IAP-135 AP, though it should be mostly applicable to other 
