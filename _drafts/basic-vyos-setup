@@ -23,9 +23,8 @@ TODO: Document the different modes and commands to change modes.
 
 ## User Accounts
 
-You should have set a password during installation and setup for the `vyos` user.
-
-You can also add additional users using the following two commands. The user 
+During installation, you set a password for the `vyos` user. You can 
+add additional users using the following two commands. The user 
 is being created with the following details:
 
  * username: jsmith
