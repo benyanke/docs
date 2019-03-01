@@ -8,3 +8,5 @@ sudo apt install -y cockpit
 ```
 
 Cockpit is now available on HOSTIP:9090.
+
+TODO: add note about cockpit modules like VMs or docker
