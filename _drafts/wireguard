@@ -232,7 +232,7 @@ $ exit
 
 A few iptables rules on the server to get things working properly.
 
-TODO: Test and debug these. copied from one of the guides above, but not yet tested or sure if even needed.
+TODO: Test and debug these. copied from one of the guides above, but not yet tested or sure if even needed. Also explain what they are.
 
 
 Track vpn connections:
