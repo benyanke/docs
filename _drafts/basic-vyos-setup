@@ -40,13 +40,12 @@ set system login user jsmith authentication plaintext-password mypassword
 commit
 ```
 
-Additionally, you can delete users (such as the default `vyos` user) by 
-running the following command. Note that you can not delete the currently 
-logged in user.
+Additionally, you can delete users (such as the default `vyos` user, which is 
+recommended) by running the following command. Note that you can not delete 
+the currently logged in user.
 
 ```
-delete system login user [username]
-commit
+delete system login user [username] commit
 ```
 
 
