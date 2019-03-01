@@ -35,7 +35,7 @@ is being created with the following details:
 
 
 ```
-set system login user jsmith full-name "Johan Smith"
+set system login user jsmith full-name "John Smith"
 set system login user jsmith authentication plaintext-password mypassword
 commit
 ```
