@@ -76,8 +76,8 @@ TODO: Document pinetry options:
  - pinentry-program /usr/bin/pinentry-qt
 
 
-TODO: Document expiration selection. TLDR: if you don't know what 
-you're doing, never expire.
+TODO: Document GPG expiration selection. 
+TLDR: if you don't know what you're doing, never expire.
 
 TODO: Document setting up GPG here
 
