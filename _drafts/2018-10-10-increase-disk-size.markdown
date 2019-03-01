@@ -11,23 +11,35 @@ tags:
 ---
 
 
-KVM disks can be resized easily to provide more space.
+KVM disks can be increased in size easily to provide more space.
 
+TODO: see if downsizing is possible?
 
-First, find your disk image. Next, stop the virtual machine.
+## Increase block device size
 
-Finally, resize the image with the following command (example: increase size by 10 gb).
+To increase the disk size, find the image on disk, and then shut 
+down your virtual machine.
+
+Then, increase the image size (in this case, increasing image 
+`disk.qcow2` by 10G).
 
 ```
-qemu-img resize [disk image] +10G
+$ sudo qemu-img resize disk.qcow2 +10G
 ```
 
 
+## Increase Partition Table
+
+Note that while the block device is increased, the partition table 
+is not yet increased. The guest operating system will need to 
+increase the size of the partition to match the disk.
+
+This is dependent on the guest OS.
+
+TODO: find linux resizing examples.
 
 
-
-TODO : Research online VM resizing
-
+## TODO: VirtIO resize example below
 
 Based on SE https://serverfault.com/a/724156/313980
 
@@ -51,5 +63,6 @@ Perform the following from the KVM hypervisor.
 
     virsh qemu-monitor-command <my_vm> block_resize drive-virtio-disk0 20G --hmp
 
-Then log into the VM. Running dmesg should report that the virtio disk detected a capacity change. At this point, go ahead and resize your partitions and LVM structure as needed.
+Then log into the VM. Running dmesg should report that the virtio disk detected a capacity change. At this point, go ahead and resize your partitions and LVM 
+structure as needed.
 
