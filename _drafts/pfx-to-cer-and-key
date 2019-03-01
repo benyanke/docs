@@ -1,5 +1,6 @@
-PFX files contain both the key and the certificate. To use on linux servers, you must extract 
-these into distinct files.
+
+PFX files contain both the key and the certificate. To use these certificates on linux 
+servers, you must extract these into distinct files.
 
 
 First, extract reencrypt the key into it's own file.
