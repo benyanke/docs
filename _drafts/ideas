@@ -15,3 +15,4 @@ Guides need to be written for the following KVM topics:
  - virt-* tools
 
 
+Do a full VyOS guide as well for basics. Specify vyos version in tag.
