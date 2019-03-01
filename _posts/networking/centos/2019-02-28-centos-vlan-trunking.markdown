@@ -33,7 +33,7 @@ following path:
 Often, there is a version of this file already in place without the vlan id you can use 
 as a basis.
 
-Update the file to look like this:
+Create the file similar to this:
 
 ```
 VLAN=yes
