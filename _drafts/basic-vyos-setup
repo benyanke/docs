@@ -1,18 +1,17 @@
 VyOS is a linux-based CLI-only router distribution. It is designed to act as a router 
-appliance, offering complex enterprise-grade routing and switching features to anyone
+appliance, offering complex enterprise-grade routing and switching features to any user 
 for free.
 
 It is based on a modifed Debian base, so can run anywhere Debian would run. It is 
-suitable for both physical installations - prefered for production uses - as well as 
-virtual installs - good for testing and VM networking.
+suitable for both physical installations - prefered for production border firewalls - 
+as well as virtual installs - good for testing and VM networking.
 
 This guide will document the steps required to take a clean VyOS install and set up the 
 basic functions required to use it as a router at the edge of a test or residential 
 network, including NAT, port forwarding, DHCP client function for the external IP, DHCP 
 server functions for internal networking. With these functions, you can replace any 
-standard consumer edge router with a far more powerful device.
+standard consumer edge router with a far more powerful and secure device.
 
-TODO: Finish each of these sections
 
 TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
 
