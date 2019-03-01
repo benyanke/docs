@@ -1,5 +1,8 @@
 on 18.04
 
+
+TODO: add note about how kerberos is prefered.
+
 sudo apt update;
 sudo apt-get install -y ldap-utils libpam-ldap libnss-ldap  nslcd
 
