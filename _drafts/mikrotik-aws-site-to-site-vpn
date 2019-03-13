@@ -1,0 +1,11 @@
+TODO: flesh this part out
+
+Go to the VPC control panel.
+
+First, setup a Customer Gateway, with your VPN remote site's public ip
+Then, setup a Virtual Private gateway.
+
+Next, setup your VPN specifying the new CG and VPG.
+
+
+Download the config. The instructions walk through the configuration.
