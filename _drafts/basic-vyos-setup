@@ -1,10 +1,24 @@
+---
+layout: post
+title:  "Basic VyOS Configuration"
+slug:   basic-setup
+date:   2019-03-31 23:58:29
+categories: vyos
+tags:
+ - networking
+ - vyos
+ - router
+ - firewall
+ - vyos-1.1.8
+---
+
 VyOS is a linux-based CLI-only router distribution. It is designed to act as a router 
 appliance, offering complex enterprise-grade routing and switching features to any user 
 for free.
 
 It is based on a modifed Debian base, so can run anywhere Debian would run. It is 
 suitable for both physical installations - prefered for production border firewalls - 
-as well as virtual installs - good for testing and VM networking.
+as well as virtual installs - good for testing and VM-only networking.
 
 This guide will document the steps required to take a clean VyOS install and set up the 
 basic functions required to use it as a router at the edge of a test or residential 
@@ -18,7 +32,22 @@ TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
 
 ## Configure Mode
 
-TODO: Document the different modes and commands to change modes.
+Similar to cisco network equipment, there are multiple modes of security operation.
+
+To enable editing of configuration, type: `configure`.
+
+```
+vyos@vyos:~$ configure 
+[edit]
+vyos@vyos#
+```
+
+When in `configure` mode, the `[edit]` tag will be displayed on each shell prompt,
+as well as the `$` turning into a `#`, which is used to seperate a root shell from
+a nonroot shell.
+
+When you are complete with changes, type `commit`. This will take the configuration 
+changes you have made and make them live.
 
 
 ## User Accounts
@@ -43,11 +72,30 @@ recommended) by running the following command. Note that you can not delete
 the currently logged in user.
 
 ```
-delete system login user [username] commit
+delete system login user [username]
+commit
 ```
 
-
 ## SSH Keys
+
+Passwords are insecure for SSH login - the best practice is to use SSH public/
+private key pairs.
+
+To specify a key for a user, use command `loadkey [user] [keypath]`.
+
+Possible protocols for keypath include:
+
+ - Direct path on filesystem
+ - scp://<user>@<host>/<file>
+ - http://<host>/<file>
+ - scp://<user>@<host>/<file>
+ - tftp://<host>/<file>
+
+For example, load a key from a public URL like this:
+
+```
+loadkey jsmith https://example.com/users/jsmith/ssh/publickey
+```
 
 ## Interface Setup
 
