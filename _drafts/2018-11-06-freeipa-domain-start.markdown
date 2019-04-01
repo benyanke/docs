@@ -52,8 +52,8 @@ partition such as an internet outage or VPN issue, users at this site can still 
 
 In our deployment, we will create two domain controllers:
 
- * dc1.corp.example.com
- * dc2.corp.example.com
+ * dc01.corp.example.com
+ * dc02.corp.example.com
 
 ## Setting up your Single-Site Domain
 
@@ -62,15 +62,20 @@ For this first guide, we will set up a single-site, dual-server setup.
 First, create a servers, which we will create as the FQDN (fully qualified domain names) 
 of `dc1.corp.example.com`. Install Ubuntu 18.04 LTS on each host.
 
+**Static IP**
+
+Domain controllers must have static IPs to function.
+
+
 **DNS**
 
-FreeIPA, like many directory servers, is picky about DNS - if not set up right, the 
-entire install will fail, or not work properly.
+FreeIPA has very specific requirements for DNS. If not set up right, the entire install will 
+fail or work improperly.
 
 Put your FQDN, followed by the short system hostname, in `/etc/hosts` file, as seen below.
 
 ```
-10.0.0.1       dc1.corp.example.com dc1
+10.0.0.1       dc01.corp.example.com dc01
 ```
 
 
