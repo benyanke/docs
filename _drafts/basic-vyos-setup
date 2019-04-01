@@ -99,6 +99,11 @@ loadkey jsmith https://example.com/users/jsmith/ssh/publickey
 
 ## Interface Setup
 
+Most router configurations feature a singlular outside/wan
+interface, and one or more inside interfaces for various
+features.
+
+
 ## Internal NAT  (src nat)
 
 ## Port Forwarding (dst nat)
