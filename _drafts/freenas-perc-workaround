@@ -1,0 +1,17 @@
+FORMAT BETTER LATER
+
+
+=======
+
+https://www.reddit.com/r/zfs/comments/5jnh9h/zfs_without_jbodhda_mode/dbixxu1/
+
+fus1on
+2 points ·
+2 years ago
+
+On FreeBSD, add these lines to /boot/loader.conf:
+
+hw.mfi.allow_cam_disk_passthrough=1
+mfip_load="YES"
+
+If necessary, destroy any volumes you've already created (you can use mfiutil for this) and reboot. You will then have direct access devices (da0 etc.) for each of the drives attached to the PERC 6/i.
