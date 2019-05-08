@@ -1,0 +1,35 @@
+## Why OEM?
+
+Creating an "OEM Install" allows a user to create an image that can be installed
+on many systems, which requests more information on the next boot up, or to use a 
+VM base image that can be cloned any number of times. Windows admins may be familiar
+with this process using the "sysprep" tool. The same can be done on linux by combining 
+a few tools.
+
+While Ubuntu desktop has a built-in OEM mode (guide available [here](https://help.ubuntu.com/community/Ubuntu_OEM_Installer_Overview), Ubuntu Server does not, requiring you to
+build your own.
+
+## Base Install
+
+Start by doing a standard ubuntu server install (we're using 18.04).
+
+Use "ubuntu" as the username and password.
+
+When the install is done, make any configuration changes you want added to the base 
+image. For example:
+ - package updates
+ - package installs
+ - modifications to configuration files 
+ - cronjobs
+ - modifications to /etc/skel
+
+## Prepare for OEM Configuration
+
+When these changes are complete, install `oem-config`:
+
+```bash
+$ sudo apt update && sudo apt install -y oem-config ;
+```
+
+
+ADD MORE HERE
