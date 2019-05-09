@@ -18,10 +18,10 @@ TODO: Document these terms:
 
 ## Install
 
-Start by installing the wireguard package.
+Start by installing the wireguard package on all nodes.
 
 ```bash
-$ sudo add-apt-repository ppa:wireguard/wireguard -y
+$ sudo add-apt-repository ppa:wireguard/wireguard -y 
 $ sudo apt-get update
 $ sudo apt-get install -y wireguard
 ```
@@ -234,7 +234,7 @@ $ exit
 
 A few iptables rules on the server to get things working properly, forwarding packets.
 
-TODO: Test and debug these. copied from one of the guides above, but not yet tested or sure if even needed. Also explain what they are.
+TODO: Test and debug these. copied from one of the guides above, but not yet tested or sure if even needed. Also explain what they are. I think they might already be in the config above?
 
 
 Track vpn connections:
