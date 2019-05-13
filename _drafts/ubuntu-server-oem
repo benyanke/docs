@@ -23,13 +23,40 @@ image. For example:
  - cronjobs
  - modifications to /etc/skel
 
+
+## Suggested scripts
+
+TODO : 
+
+ - Add partition expand script
+
+something like this (NOTE: UNTESTED):
+
+start=$(cat /sys/block/mmcblk0/mmcblk0p3/start)
+end=$(($start+$(cat /sys/block/mmcblk0/mmcblk0p3/size)))
+newend=$(($(cat /sys/block/mmcblk0/size)-8))
+
+if [ "$newend" -gt "$end" ]
+then
+    parted -s /dev/mmcblk0 unit s resize 3 $start $newend
+fi
+
+
 ## Prepare for OEM Configuration
 
-When these changes are complete, install `oem-config`:
+When these changes are complete, and you're ready to creae your clean image, 
+install package `oem-config`:
 
 ```bash
 $ sudo apt update && sudo apt install -y oem-config ;
 ```
 
+Once installed, run the following command. This will setup the system to refresh
+itself on the next boot.
 
-ADD MORE HERE
+```bash
+$ sudo oem-config-prepare
+```
+
+TODO: Look at this alternative option:
+https://docs.openstack.org/image-guide/ubuntu-image.html
