@@ -77,9 +77,10 @@ is being created with the following details:
  * Password: mypassword
 
 
-```
-set system login user jsmith full-name "John Smith"
-set system login user jsmith authentication plaintext-password mypassword
+```bash
+[edit]
+vyos@vyos# set system login user jsmith full-name "John Smith"
+vyos@vyos# set system login user jsmith authentication plaintext-password mypassword
 commit
 ```
 
@@ -87,9 +88,10 @@ Additionally, you can delete users (such as the default `vyos` user, which is
 recommended) by running the following command. Note that you can not delete 
 the currently logged in user.
 
-```
-delete system login user [username]
-commit
+```bash
+[edit]
+vyos@vyos# delete system login user [username]
+vyos@vyos# commit
 ```
 
 ## SSH Keys
@@ -110,7 +112,8 @@ Possible protocols for keypath include:
 For example, load a key from a public URL like this:
 
 ```
-loadkey jsmith https://example.com/users/jsmith/ssh/publickey
+[edit]
+vyos@vyos# loadkey jsmith https://example.com/users/jsmith/ssh/publickey
 ```
 
 ## Interface Setup
@@ -118,6 +121,31 @@ loadkey jsmith https://example.com/users/jsmith/ssh/publickey
 Most router configurations feature a singlular outside/wan
 interface, and one or more inside interfaces for various
 features.
+
+Begin by enumeration the interfaces on the system.
+
+```bash
+[edit]
+vyos@vyos# show interfaces
+```
+
+Then, we will set up the interfaces we found. We'll set up one outside
+interface with DHCP, and one inner interface with an IP, a
+configuration suitable for a standard residential or small 
+business network.
+
+```bash
+[edit]
+vyos@vyos# set interfaces ethernet eth0 address dhcp
+vyos@vyos# set interfaces ethernet eth0 description 'OUTSIDE'
+```
+
+```bash
+[edit]
+vyos@vyos# set interfaces ethernet eth1 address '192.168.0.1/24'
+[edit]
+vyos@vyos# set interfaces ethernet eth1 description 'INSIDE'
+```
 
 
 ## Internal NAT  (src nat)
