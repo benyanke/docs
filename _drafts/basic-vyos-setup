@@ -74,6 +74,15 @@ The first step in any system build is setting the hostname
 # commit
 ```
 
+## Set Timezone
+
+Now, we'll set the system's timezone. After typing the command, press `[TAB]`
+multiple times to see the options, and select yours by continuing to type.
+
+```bash
+# set system time-zone [TAB]
+```
+
 ## User Accounts
 
 During installation, you set a password for the `vyos` user. You can 
@@ -160,7 +169,8 @@ Setup the static inside LAN interface:
 Finally, set the DNS server for the router.
 
 ```bash
-# set system name-server 8.8.8.8
+# set system name-server 9.9.9.9
+# set system name-server 149.112.112.112
 ```
 
 ## Enable SSH
@@ -182,13 +192,50 @@ only is recommended.
 By default, VyOS only routes packets. Additional setup is required to allow 
 multiple devices to share a public IP on the WAN connection (`src nat`).
 
-TODO: add nat config here
+Set the following configuration. Replace `eth0` with your OUTSIDE interface,
+and the `source address` IP with your device's INSIDE IP.
 
-## Port Forwarding (dst nat)
-
-## DHCP Client for Public IP
+```bash
+# set nat source rule 100 outbound-interface 'eth0'
+# set nat source rule 100 source address '192.168.0.0/24'
+# set nat source rule 100 translation address masquerade
+```
 
 ## DHCP Server for Internal Clients
+
+VyOS can act as a DHCP server if you wish.
+
+Set the basic config for the DHCP clients:
+
+```bash
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
+```
+
+
+Finally, set your IP range for DHCP to hand out IPs:
+
+```bash
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
+```
+
+## Setup DNS forwarder
+
+VyOS can be set up to be a DNS forwarder, including caching. This allows
+clients to query the VyOS device for DNS, and it can pass on requests to
+public DNS servers.
+
+Replace the interface with your INSIDE interface.
+
+```bash
+# set service dns forwarding system
+# set service dns forwarding listen-on 'eth4'
+```
+
+## Port Forwarding (dst nat)
 
 ## Multiple Subnets
 
