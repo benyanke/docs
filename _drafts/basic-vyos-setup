@@ -30,11 +30,27 @@ standard consumer edge router with a far more powerful and secure device.
 TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
 
 
+## Install
+
+For the initial install, boot from the bootable media, and login with username and 
+password of "vyos."
+
+From there, run command `install image` and follow the prompts.
+
+```bash
+vyos@vyos:~$ install image
+```
+
+When complete, reboot. 
+
+
 ## Configure Mode
 
-Similar to cisco network equipment, there are multiple modes of security operation.
+As with other unix systems and networking equipment, there are multiple security contexts 
+with greater or lesser privilege. 
 
-To enable editing of configuration, type: `configure`.
+To enter "edit" mode on vyos, which allows configuration to be edited, not just read, 
+type: `configure`.
 
 ```
 vyos@vyos:~$ configure 
