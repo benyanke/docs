@@ -109,7 +109,7 @@ Possible protocols for keypath include:
  - scp://<user>@<host>/<file>
  - tftp://<host>/<file>
 
-For example, load a key from a public URL like this:
+For example, load a key from a public URL using the command below.
 
 ```
 [edit]
