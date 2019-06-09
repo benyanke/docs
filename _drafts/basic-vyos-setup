@@ -158,8 +158,26 @@ Setup the static inside LAN interface:
 # set interfaces ethernet eth1 description 'INSIDE'
 ```
 
+## Enable SSH
 
-## Internal NAT  (src nat)
+Next, you can enable SSH. The command below starts SSH listening
+on all the router's IPs.
+
+```bash
+# set service ssh port 22
+```
+
+NOTE: this also exposes SSH access on the public OUTSIDE interface.
+Use with caution. Adding firewall rules to limit to internal use
+only is recommended.
+
+
+## Internal NAT (src nat)
+
+By default, VyOS only routes packets. Additional setup is required to allow 
+multiple devices to share a public IP on the WAN connection (`src nat`).
+
+TODO: add nat config here
 
 ## Port Forwarding (dst nat)
 
