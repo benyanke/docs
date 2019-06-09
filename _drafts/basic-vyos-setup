@@ -65,6 +65,15 @@ a nonroot shell.
 When you are complete with changes, type `commit`. This will take the configuration 
 changes you have made and make them live.
 
+## Hostname
+
+The first step in any system build is setting the hostname.
+
+```bash
+# set system host-name [fw01]
+# set system domain-name [corp.example.com]
+# commit
+```
 
 ## User Accounts
 
@@ -78,20 +87,20 @@ is being created with the following details:
 
 
 ```bash
-[edit]
-vyos@vyos# set system login user jsmith full-name "John Smith"
-vyos@vyos# set system login user jsmith authentication plaintext-password mypassword
-commit
+# set system login user jsmith full-name "John Smith"
+# set system login user jsmith authentication plaintext-password mypassword
 ```
 
 Additionally, you can delete users (such as the default `vyos` user, which is 
 recommended) by running the following command. Note that you can not delete 
-the currently logged in user.
+the currently logged in user. Below, we'll delete the default user after
+adding our own.
+
+Note: you will need to log out and login as your new user `jsmith` before
+you can delete the default user.
 
 ```bash
-[edit]
-vyos@vyos# delete system login user [username]
-vyos@vyos# commit
+# delete system login user vyos
 ```
 
 ## SSH Keys
@@ -125,26 +134,28 @@ features.
 Begin by enumeration the interfaces on the system.
 
 ```bash
-[edit]
-vyos@vyos# show interfaces
+# show interfaces
 ```
+
+The system then lists all the interfaces and their mac addresses.
 
 Then, we will set up the interfaces we found. We'll set up one outside
 interface with DHCP, and one inner interface with an IP, a
 configuration suitable for a standard residential or small 
 business network.
 
-```bash
-[edit]
-vyos@vyos# set interfaces ethernet eth0 address dhcp
-vyos@vyos# set interfaces ethernet eth0 description 'OUTSIDE'
-```
+Setup the external DHCP WAN interface: 
 
 ```bash
-[edit]
-vyos@vyos# set interfaces ethernet eth1 address '192.168.0.1/24'
-[edit]
-vyos@vyos# set interfaces ethernet eth1 description 'INSIDE'
+# set interfaces ethernet eth0 address dhcp
+# set interfaces ethernet eth0 description 'OUTSIDE'
+```
+
+Setup the static inside LAN interface:
+
+```bash
+# set interfaces ethernet eth1 address '192.168.0.1/24'
+# set interfaces ethernet eth1 description 'INSIDE'
 ```
 
 
