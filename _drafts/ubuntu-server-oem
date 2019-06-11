@@ -1,4 +1,4 @@
-7## Why OEM?
+## Why OEM?
 
 Creating an "OEM Install" allows a user to create an image that can be installed
 on many systems, which requests more information on the next boot up, or to use a 
@@ -69,3 +69,24 @@ https://docs.openstack.org/image-guide/ubuntu-image.html
 https://askubuntu.com/questions/736484/oem-install-ubuntu-server-14-04
 https://askubuntu.com/questions/717842/oem-install-of-ubuntu-server-14-04-3
 https://wiki.ubuntu.com/OemConfigServer
+
+
+
+## ALTERNATIVE METHOD
+https://docs.openstack.org/image-guide/ubuntu-image.html
+
+``` bash
+$ sudo apt-get install cloud-init -y
+```
+
+```bash
+$ sudo dpkg-reconfigure cloud-init
+```
+
+Uncheck "ec2".
+
+Run the sysprep command on the vmname in virsh
+
+```bash
+virt-sysprep -d vmname
+```
