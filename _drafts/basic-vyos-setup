@@ -66,7 +66,7 @@ changes you have made and make them live.
 
 ## Hostname
 
-The first step in any system build is setting the hostname 
+The first step in any system build is setting the hostname.
 
 ```bash
 # set system host-name [fw01]
@@ -222,6 +222,18 @@ Finally, set your IP range for DHCP to hand out IPs:
 # set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
 ```
 
+## Save command
+
+IMPORTANT: when you finish your configuration session, it is critical to run the `save` command
+from a configuration shell context.
+
+This stores the current committed configuration to the startup config. Running `commit` writes the
+current config to memory, while running `save` writes it to the startup.
+
+```bash
+# save
+```
+
 ## Setup DNS forwarder
 
 VyOS can be set up to be a DNS forwarder, including caching. This allows
@@ -270,3 +282,12 @@ users may find them useful for their work.
 ## SNMP
 
 ## Single Signon - LDAP
+
+## Viewing Logs
+
+View logs by running:
+
+TODO: fill this in
+```bash
+# 
+```
