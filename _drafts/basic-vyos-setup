@@ -9,7 +9,6 @@ tags:
  - vyos
  - router
  - firewall
- - vyos-1.1.8
 ---
 
 VyOS is a linux-based CLI-only router distribution. It is designed to act as a router 
@@ -30,11 +29,27 @@ standard consumer edge router with a far more powerful and secure device.
 TODO: use this for some steps: https://wiki.vyos.net/wiki/User_Guide
 
 
+## Install
+
+For the initial install, boot from the bootable media, and login with username and 
+password of "vyos."
+
+From there, run command `install image` and follow the prompts.
+
+```bash
+vyos@vyos:~$ install image
+```
+
+When complete, reboot. 
+
+
 ## Configure Mode
 
-Similar to cisco network equipment, there are multiple modes of security operation.
+As with other unix systems and networking equipment, there are multiple security contexts 
+with greater or lesser privilege. 
 
-To enable editing of configuration, type: `configure`.
+To enter "edit" mode on vyos, which allows configuration to be edited, not just read, 
+type: `configure`.
 
 ```
 vyos@vyos:~$ configure 
@@ -49,6 +64,24 @@ a nonroot shell.
 When you are complete with changes, type `commit`. This will take the configuration 
 changes you have made and make them live.
 
+## Hostname
+
+The first step in any system build is setting the hostname.
+
+```bash
+# set system host-name [fw01]
+# set system domain-name [corp.example.com]
+# commit
+```
+
+## Set Timezone
+
+Now, we'll set the system's timezone. After typing the command, press `[TAB]`
+multiple times to see the options, and select yours by continuing to type.
+
+```bash
+# set system time-zone [TAB]
+```
 
 ## User Accounts
 
@@ -61,19 +94,21 @@ is being created with the following details:
  * Password: mypassword
 
 
-```
-set system login user jsmith full-name "John Smith"
-set system login user jsmith authentication plaintext-password mypassword
-commit
+```bash
+# set system login user jsmith full-name "John Smith"
+# set system login user jsmith authentication plaintext-password mypassword
 ```
 
 Additionally, you can delete users (such as the default `vyos` user, which is 
 recommended) by running the following command. Note that you can not delete 
-the currently logged in user.
+the currently logged in user. Below, we'll delete the default user after
+adding our own.
 
-```
-delete system login user [username]
-commit
+Note: you will need to log out and login as your new user `jsmith` before
+you can delete the default user.
+
+```bash
+# delete system login user vyos
 ```
 
 ## SSH Keys
@@ -91,10 +126,11 @@ Possible protocols for keypath include:
  - scp://<user>@<host>/<file>
  - tftp://<host>/<file>
 
-For example, load a key from a public URL like this:
+For example, load a key from a public URL using the command below.
 
 ```
-loadkey jsmith https://example.com/users/jsmith/ssh/publickey
+[edit]
+vyos@vyos# loadkey jsmith https://example.com/users/jsmith/ssh/publickey
 ```
 
 ## Interface Setup
@@ -103,14 +139,128 @@ Most router configurations feature a singlular outside/wan
 interface, and one or more inside interfaces for various
 features.
 
+Begin by enumeration the interfaces on the system.
 
-## Internal NAT  (src nat)
+```bash
+# show interfaces
+```
 
-## Port Forwarding (dst nat)
+The system then lists all the interfaces and their mac addresses.
 
-## DHCP Client for Public IP
+Then, we will set up the interfaces we found. We'll set up one outside
+interface with DHCP, and one inner interface with an IP, a
+configuration suitable for a standard residential or small 
+business network.
+
+Setup the external DHCP WAN interface: 
+
+```bash
+# set interfaces ethernet eth0 address dhcp
+# set interfaces ethernet eth0 description 'OUTSIDE'
+```
+
+Setup the static inside LAN interface:
+
+```bash
+# set interfaces ethernet eth1 address '192.168.0.1/24'
+# set interfaces ethernet eth1 description 'INSIDE'
+```
+
+Finally, set the DNS server for the router.
+
+```bash
+# set system name-server 9.9.9.9
+# set system name-server 149.112.112.112
+```
+
+## Enable SSH
+
+Next, you can enable SSH. The command below starts SSH listening
+on all the router's IPs.
+
+```bash
+# set service ssh port 22
+```
+
+NOTE: this also exposes SSH access on the public OUTSIDE interface.
+Use with caution. Adding firewall rules to limit to internal use
+only is recommended.
+
+
+## Internal NAT (src nat)
+
+By default, VyOS only routes packets. Additional setup is required to allow 
+multiple devices to share a public IP on the WAN connection (`src nat`).
+
+Set the following configuration. Replace `eth0` with your OUTSIDE interface,
+and the `source address` IP with your device's INSIDE IP.
+
+```bash
+# set nat source rule 100 outbound-interface 'eth0'
+# set nat source rule 100 source address '192.168.0.0/24'
+# set nat source rule 100 translation address masquerade
+```
 
 ## DHCP Server for Internal Clients
+
+VyOS can act as a DHCP server if you wish.
+
+Set the basic config for the DHCP clients:
+
+```bash
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
+```
+
+
+Finally, set your IP range for DHCP to hand out IPs:
+
+```bash
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
+# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
+```
+
+## Save command
+
+IMPORTANT: when you finish your configuration session, it is critical to run the `save` command
+from a configuration shell context.
+
+This stores the current committed configuration to the startup config. Running `commit` writes the
+current config to memory, while running `save` writes it to the startup.
+
+```bash
+# save
+```
+
+Similarly, you can specify a paramater on where to save the file, if you don't want to store to the 
+startup config. This can also be used for backups of the current running config.
+
+```bash
+# save /local/file/path/config.conf
+# save scp://user@remote.host/path/to/file.config
+# save ftp://user@remote.host/path/to/file.config
+# save tftp://remote.host/router.config
+```
+
+TODO: make this a link
+https://wiki.vyos.net/wiki/Save_(command)
+
+## Setup DNS forwarder
+
+VyOS can be set up to be a DNS forwarder, including caching. This allows
+clients to query the VyOS device for DNS, and it can pass on requests to
+public DNS servers.
+
+Replace the interface with your INSIDE interface.
+
+```bash
+# set service dns forwarding system
+# set service dns forwarding listen-on 'eth4'
+```
+
+## Port Forwarding (dst nat)
 
 ## Multiple Subnets
 
@@ -145,3 +295,12 @@ users may find them useful for their work.
 ## SNMP
 
 ## Single Signon - LDAP
+
+## Viewing Logs
+
+View logs by running:
+
+TODO: fill this in
+```bash
+# 
+```
