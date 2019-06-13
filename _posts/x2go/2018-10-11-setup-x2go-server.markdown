@@ -11,6 +11,8 @@ tags:
  - ubuntu-18-04
 ---
 
+Related: _[Client install guide]({{ site.baseurl }}{% post_url x2go/2018-10-11-setup-x2go-client %})_
+
 ## What is X2Go?
 X2Go is a linux tool similar to RDP for windows which allows remote access of a system 
 with higher performance than is possible with VNC.
