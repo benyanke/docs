@@ -66,3 +66,10 @@ Perform the following from the KVM hypervisor.
 Then log into the VM. Running dmesg should report that the virtio disk detected a capacity change. At this point, go ahead and resize your partitions and LVM 
 structure as needed.
 
+
+
+
+TODO: document non-vm method using fdisk:
+https://www.techrepublic.com/blog/smb-technologist/extending-partitions-on-linux-vmware-virtual-machines/
+https://linuxconfig.org/how-to-resize-ext4-root-partition-live-without-umount
+https://www.tecmint.com/extend-and-reduce-lvms-in-linux/
