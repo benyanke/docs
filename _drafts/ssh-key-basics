@@ -1,0 +1,191 @@
+
+## SSH Key Basics
+
+TODO : cover the following : 
+
+ - What are SSH keys
+ - Difference between public and private keys
+ - safety in sharing public keys
+ - best practices
+
+## Create your Key
+
+You can create a key by running the following command: `ssh-keygen -t rsa -C "jdoe@example.com"`.
+
+In the filename, provide a clear name for your keys. For most uses, provide a password to encrypt
+your key, so that even if the file is compromised, it is not available to an attacker.
+
+Once you run the command, the `ssh-keygen` tool will prompt you, and then generate the public and
+private key pair.
+
+```bash
+$ ssh-keygen -t rsa -C "jdoe@example.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/benyanke/.ssh/id_rsa): jdoe-key
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in jdoe-key.
+Your public key has been saved in jdoe-key.pub.
+The key fingerprint is:
+SHA256:ZNT/RooSI5D3FJJCSNYIQugEZPnCdipS838kQODRNSc jdoe@example.com
+The key's randomart image is:
++---[RSA 2048]----+
+|O**B.oE.+o       |
+|+=o.B o*. .      |
+|+ o. + oo  .     |
+| =oo. .o+   . .  |
+|..+o . .So . +   |
+|o.  . . o . . o  |
+|o    . o .   .   |
+|      . .        |
+|       .         |
++----[SHA256]-----+
+
+```
+
+
+## SSH Key Formats
+
+Use the following examples to identify the format which your key is stored in:
+
+
+### OpenSSH - Private Key
+
+OpenSSH format private keys are typically used by linux systems, and is also the
+typical format of keys generated in the AWS console. Often, they are stored with 
+the extension `.pem`.
+
+Private keys in PEM format have a format like:
+
+```
+-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAtDPPAbj93IGn3c5/J4DjP8Nm7OLZDkhI8XGgMl7uuxT42bpX
+9rOQd0RZsL56I6YkY3FsST/0yTC1IVek9DEK+ISHZ32z1sHeg9keXce1BnVbG7YJ
+KRUJFABzpkanboWj2OGaCqjR/vsVmpQ3nqNUJohMJHFxjdQQBYmLkSz3v9R/3drR
+6JK68oxA+Php2tbCnML8FkcIlBfv5rDzQYvHRVsywFvyxTGPG43IamSo1eyM9s6I
+MX36k8GFOYsyCkrBto37GaHur4l5EmK48TzIWTEQma4B2ybhRX3u3DvpLsIhyOZR
+4WkyZwKXMbdIOaZ9Mynown6qXlJMpt4qRTetZQIDAQABAoIBACtRUO+vEodRO5Mc
+MoDCgN4xEKrdFSRTyAUSNVoma+jY78EXBFIvdAjXi1/rSd0L8S9ecpNhJmy+oqvz
+L5nruCFpaks8cmCrldvH837DpQZ6a35L0gPoJJiES0irL1BoG6zk/myVjHVo0hao
+jn458N6aYQNZqdxYH8nU+JHbZ2rbOOUJ0j1qXoBZL1yuQAJMM5GX+NqIw7EgHxp1
+HGpzf8nXUjyq9e4MQLWl450gpdwP0Dn0i7VICJZU2teNB4gh2vsL7w+SmavWdVp9
+2Fv4WtTNjsnQxmi3oittz4yq7ZgVfnlZC8DjcwTpHV3getfUcbTMw6paRYL6KRCM
+EtNEunkCgYEA2QXAVYz2KIXgNg8UsYeLHgN5URJCItK//4te7TCsQcKkQOiVqxSL
+PAQuMjY43PCC7muQbpKcAZqrpoznSyUhrn+OKeMjO32F8H/CwaDHzvx6uCWV93uq
+BhWImphqKC1M9OS3dVeODNTv+ONa+Ik93E/0QsZZBT4aQtHGVe2xe8sCgYEA1JEl
+H/lB9tY8cYRujCY/XDmuYJVMhepcc9+fhXB0wZSrPljop61+iFwiC1k/vDhCc9fU
+78OL6l/saeV7+Yf2GPPfYXyq0HhwQhDE54W+q5qmfgiG7QBkmNaVolqYB7218CsS
+mfKdj7VuIgsvrXIV/UOQP/uYd/aoOgSW0OAHtY8CgYAp90u+/1gmc+TsbzQgNEa5
+khBmlfJGC5znDItZsHzO5pWem5s9juZxv5kzSnrqdnPLKO+wAhe60673sO2VAWQm
++zGBdhO9EEPTQtFlYfLhWr9cVqBOUBKLxKQ6yNhWVpQ4EvZK8ZhdcNvKtCRGRTu6
+G5fvRa23LtAjNa91tFYKywKBgEymSgzNhMvNVN5aMsK2yAIpioepTn67k7r02ED1
+3CQxx84joUFVflsNXflZpXHpl4zONyp+COXq0QUeiyXfsQ4uYk509eNWiqRIB7i0
+sZyPl5m62Wx8x8mVF0AECu4/qmuAHKUGp2o6sgv0nKyehu9cfZeU0dXwS5kgLoID
+RsRhAoGAHN+HeFvegCVwktm0zLX4SUbyiMzhpqaK+ppPuNyZOTBp/g1oOBnM0C0h
+hf7OBqSaalYaPnJ5JfvXP/a8TjVjnQDNlbqZga6pAKK7wwn2hWDJO59IIyFfllbB
++Ki+Q4F7IXqS6XLGPpgp7yoKhNJYqNaDrdR3MNQ65JFGdrnxRY8=
+-----END RSA PRIVATE KEY-----
+```
+
+### OpenSSH - Public Key
+
+The most common method for storage of public keys is the OpenSSH format.
+
+OpenSSH format public keys are the following format:
+
+```
+ssh-rsa [key value] [key comment]
+```
+
+The key comment can be adjusted without modifying the key value, though it is
+recommended to keep the key comment the same after key creation for easier 
+identifcation. Typically, the comment contains, at minimum, the user's 
+email address.
+
+An example of a public key in this format is:
+
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0M88BuP3cgafdzn8ngOM/w2bs4tkOSEjxcaAyXu67FPjZulf2s5B3RFmwvnojpiRjcWxJP/TJMLUhV6T0MQr4hIdnfbPWwd6D2R5dx7UGdVsbtgkpFQkUAHOmRqduhaPY4ZoKqNH++xWalDeeo1QmiEwkcXGN1BAFiYuRLPe/1H/d2tHokrryjED4+Gna1sKcwvwWRwiUF+/msPNBi8dFWzLAW/LFMY8bjchqZKjV7Iz2zogxffqTwYU5izIKSsG2jfsZoe6viXkSYrjxPMhZMRCZrgHbJuFFfe7cO+kuwiHI5lHhaTJnApcxt0g5pn0zKejCfqpeUkym3ipFN61l jdoe@example.com
+```
+
+To provide a user access to a system, the user's key is typically added to 
+a new line in the file `~/.ssh/authorized_keys` to the user's home directory
+to which access is being granted. 
+
+### SSH2 - Private Key
+
+The SSH2 format for keys is typically used by PuTTY on Windows, and other non-unix
+operating systems and tools. It is often stored with extension `.ppk`.
+
+An example of this key format:
+
+```
+PuTTY-User-Key-File-2: ssh-rsa
+Encryption: none
+Comment: rsa-key-20190101
+Public-Lines: 6
+AAAAB3NzaC1yc2EAAAADAQABAAABAQC0M88BuP3cgafdzn8ngOM/w2bs4tkOSEjx
+caAyXu67FPjZulf2s5B3RFmwvnojpiRjcWxJP/TJMLUhV6T0MQr4hIdnfbPWwd6D
+2R5dx7UGdVsbtgkpFQkUAHOmRqduhaPY4ZoKqNH++xWalDeeo1QmiEwkcXGN1BAF
+iYuRLPe/1H/d2tHokrryjED4+Gna1sKcwvwWRwiUF+/msPNBi8dFWzLAW/LFMY8b
+jchqZKjV7Iz2zogxffqTwYU5izIKSsG2jfsZoe6viXkSYrjxPMhZMRCZrgHbJuFF
+fe7cO+kuwiHI5lHhaTJnApcxt0g5pn0zKejCfqpeUkym3ipFN61l
+Private-Lines: 14
+AAABAQCv7WYgpSbiWedDt/9k64LL/X9BcOUQ9WMVHZg7Fa8yOxQqiQ3pjd32GyoE
+MIIEogIBAAKCAQEAtDPPAbj93IGn3c5/J4DjP8Nm7OLZDkhI8XGgMl7uuxT42bpX
+hf7OBqSaalYaPnJ5JfvXP/a8TjVjnQDNlbqZga6pAKK7wwn2hWDJO59IIyFfllbB
++zGBdhO9EEPTQtFlYfLhWr9cVqBOUBKLxKQ6yNhWVpQ4EvZK8ZhdcNvKtCRGRTu6
+9rOQd0RZsL56I6YkY3FsST/0yTC1IVek9DEK+ISHZ32z1sHeg9keXce1BnVbG7YJ
+G5fvRa23LtAjNa91tFYKywKBgEymSgzNhMvNVN5aMsK2yAIpioepTn67k7r02ED1
+3CQxx84joUFVflsNXflZpXHpl4zONyp+COXq0QUeiyXfsQ4uYk509eNWiqRIB7i0
+sZyPl5m62Wx8x8mVF0AECu4/qmuAHKUGp2o6sgv0nKyehu9cfZeU0dXwS5kgLoID
+9rOQd0RZsL56I6YkY3FsST/0yTC1IVek9DEK+ISHZ32z1sHeg9keXce1BnVbG7YJ
+hf7OBqSaalYaPnJ5JfvXP/a8TjVjnQDNlbqZga6pAKK7wwn2hWDJO59IIyFfllbB
+MIIEogIBAAKCAQEAtDPPAbj93IGn3c5/J4DjP8Nm7OLZDkhI8XGgMl7uuxT42bpX
+RsRhAoGAHN+HeFvegCVwktm0zLX4SUbyiMzhpqaK+ppPuNyZOTBp/g1oOBnM0C0h
++Ki+Q4F7IXqS6XLGPpgp7yoKhNJYqNaDrdR3MNQ65JFGdrnxRY8=
+Private-MAC: 66c97308cc704632a5c4274fd44ae39bb180b4a3
+```
+
+
+### SSH2 - Public Key
+
+SSH2 also has a public key format. Example:
+
+```
+---- BEGIN SSH2 PUBLIC KEY ----
+Comment: "2048-bit RSA, converted by benyanke@by-thinkpad from OpenSSH"
+AAAAB3NzaC1yc2EAAAADAQABAAABAQC0M88BuP3cgafdzn8ngOM/w2bs4tkOSEjxcaAyXu
+67FPjZulf2s5B3RFmwvnojpiRjcWxJP/TJMLUhV6T0MQr4hIdnfbPWwd6D2R5dx7UGdVsb
+tgkpFQkUAHOmRqduhaPY4ZoKqNH++xWalDeeo1QmiEwkcXGN1BAFiYuRLPe/1H/d2tHokr
+ryjED4+Gna1sKcwvwWRwiUF+/msPNBi8dFWzLAW/LFMY8bjchqZKjV7Iz2zogxffqTwYU5
+izIKSsG2jfsZoe6viXkSYrjxPMhZMRCZrgHbJuFFfe7cO+kuwiHI5lHhaTJnApcxt0g5pn
+0zKejCfqpeUkym3ipFN61l
+---- END SSH2 PUBLIC KEY ----
+```
+
+
+
+## SSH key conversion commands
+
+There are multiple text formats for storing keys - some tools require one, 
+while other tools require the other. The same key can be converted from one
+format to the other easily.
+
+### OpenSSH private or public key to SSH2 public key
+
+This can be used to convert either a private or public key in OpenSSH format
+and output an SSH2 format public key.
+
+```
+ssh-keygen -e -f KEY-FILE-IN > KEY-FILE-OUT
+```
+
+
+
+CONVERSION GUIDE: 
+https://burnz.wordpress.com/2007/12/14/ssh-convert-openssh-to-ssh2-and-vise-versa/
+
+https://www.oreilly.com/library/view/linux-security-cookbook/0596003919/ch06s05.html
+
+https://unix.stackexchange.com/questions/84060/convert-openssh-private-key-into-ssh2-private-key
