@@ -75,22 +75,22 @@ current config to memory, while running `save` writes it to the startup.
 The general workflow of a configuration session should look like:
 
 ```bash
-$ configure
-# [your configuration commands]
-# [your configuration commands]
-# commit
-# save
-# exit
+vyos@vyos:~$ configure
+vyos@vyos# [your configuration commands]
+vyos@vyos# [your configuration commands]
+vyos@vyos# commit
+vyos@vyos# save
+vyos@vyos# exit
 ```
 
 Similarly, you can specify a paramater on where to save the file, if you don't want to store to the 
 startup config. This can also be used for backups of the current running config.
 
 ```bash
-# save /local/file/path/config.conf
-# save scp://user@remote.host/path/to/file.config
-# save ftp://user@remote.host/path/to/file.config
-# save tftp://remote.host/router.config
+vyos@vyos# save /local/file/path/config.conf
+vyos@vyos# save scp://user@remote.host/path/to/file.config
+vyos@vyos# save ftp://user@remote.host/path/to/file.config
+vyos@vyos# save tftp://remote.host/router.config
 ```
 
 TODO: make this a link
@@ -102,9 +102,9 @@ https://wiki.vyos.net/wiki/Save_(command)
 The first step in any system build is setting the hostname.
 
 ```bash
-# set system host-name [fw01]
-# set system domain-name [corp.example.com]
-# commit
+vyos@vyos# set system host-name [fw01]
+vyos@vyos# set system domain-name [corp.example.com]
+vyos@vyos# commit
 ```
 
 ## Set Timezone
@@ -113,7 +113,7 @@ Now, we'll set the system's timezone. After typing the command, press `[TAB]`
 multiple times to see the options, and select yours by continuing to type.
 
 ```bash
-# set system time-zone [TAB]
+vyos@vyos# set system time-zone [TAB]
 ```
 
 ## User Accounts
@@ -128,8 +128,8 @@ is being created with the following details:
 
 
 ```bash
-# set system login user jsmith full-name "John Smith"
-# set system login user jsmith authentication plaintext-password mypassword
+vyos@vyos# set system login user jsmith full-name "John Smith"
+vyos@vyos# set system login user jsmith authentication plaintext-password mypassword
 ```
 
 Additionally, you can delete users (such as the default `vyos` user, which is 
@@ -141,7 +141,7 @@ Note: you will need to log out and login as your new user `jsmith` before
 you can delete the default user.
 
 ```bash
-# delete system login user vyos
+vyos@vyos# delete system login user vyos
 ```
 
 ## SSH Keys
@@ -175,7 +175,7 @@ features.
 Begin by enumeration the interfaces on the system.
 
 ```bash
-# show interfaces
+vyos@vyos# show interfaces
 ```
 
 The system then lists all the interfaces and their mac addresses.
@@ -188,22 +188,22 @@ business network.
 Setup the external DHCP WAN interface: 
 
 ```bash
-# set interfaces ethernet eth0 address dhcp
-# set interfaces ethernet eth0 description 'OUTSIDE'
+vyos@vyos# set interfaces ethernet eth0 address dhcp
+vyos@vyos# set interfaces ethernet eth0 description 'OUTSIDE'
 ```
 
 Setup the static inside LAN interface:
 
 ```bash
-# set interfaces ethernet eth1 address '192.168.0.1/24'
-# set interfaces ethernet eth1 description 'INSIDE'
+vyos@vyos# set interfaces ethernet eth1 address '192.168.0.1/24'
+vyos@vyos# set interfaces ethernet eth1 description 'INSIDE'
 ```
 
 Finally, set the DNS server for the router.
 
 ```bash
-# set system name-server 9.9.9.9
-# set system name-server 149.112.112.112
+vyos@vyos# set system name-server 9.9.9.9
+vyos@vyos# set system name-server 149.112.112.112
 ```
 
 ## Enable SSH
@@ -212,7 +212,7 @@ Next, you can enable SSH. The command below starts SSH listening
 on all the router's IPs.
 
 ```bash
-# set service ssh port 22
+vyos@vyos# set service ssh port 22
 ```
 
 NOTE: this also exposes SSH access on the public OUTSIDE interface.
@@ -229,9 +229,9 @@ Set the following configuration. Replace `eth0` with your OUTSIDE interface,
 and the `source address` IP with your device's INSIDE IP.
 
 ```bash
-# set nat source rule 100 outbound-interface 'eth0'
-# set nat source rule 100 source address '192.168.0.0/24'
-# set nat source rule 100 translation address masquerade
+vyos@vyos# set nat source rule 100 outbound-interface 'eth0'
+vyos@vyos# set nat source rule 100 source address '192.168.0.0/24'
+vyos@vyos# set nat source rule 100 translation address masquerade
 ```
 
 ## DHCP Server for Internal Clients
@@ -241,18 +241,18 @@ VyOS can act as a DHCP server if you wish.
 Set the basic config for the DHCP clients:
 
 ```bash
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
 ```
 
 
 Finally, set your IP range for DHCP to hand out IPs:
 
 ```bash
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
-# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
+vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
 ```
 
 ## Setup DNS forwarder
@@ -264,8 +264,8 @@ public DNS servers.
 Replace the interface with your INSIDE interface.
 
 ```bash
-# set service dns forwarding system
-# set service dns forwarding listen-on 'eth4'
+vyos@vyos# set service dns forwarding system
+vyos@vyos# set service dns forwarding listen-on 'eth4'
 ```
 
 ## Port Forwarding (dst nat)
