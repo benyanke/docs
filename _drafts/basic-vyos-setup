@@ -64,6 +64,39 @@ a nonroot shell.
 When you are complete with changes, type `commit`. This will take the configuration 
 changes you have made and make them live.
 
+## Workflow with Save command
+
+IMPORTANT: when you finish your configuration session, it is critical to run the `save` command
+from a configuration shell context.
+
+This stores the current committed configuration to the startup config. Running `commit` writes the
+current config to memory, while running `save` writes it to the startup.
+
+The general workflow of a configuration session should look like:
+
+```bash
+$ configure
+# [your configuration commands]
+# [your configuration commands]
+# commit
+# save
+# exit
+```
+
+Similarly, you can specify a paramater on where to save the file, if you don't want to store to the 
+startup config. This can also be used for backups of the current running config.
+
+```bash
+# save /local/file/path/config.conf
+# save scp://user@remote.host/path/to/file.config
+# save ftp://user@remote.host/path/to/file.config
+# save tftp://remote.host/router.config
+```
+
+TODO: make this a link
+https://wiki.vyos.net/wiki/Save_(command)
+
+
 ## Hostname
 
 The first step in any system build is setting the hostname.
@@ -221,31 +254,6 @@ Finally, set your IP range for DHCP to hand out IPs:
 # set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
 # set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
 ```
-
-## Save command
-
-IMPORTANT: when you finish your configuration session, it is critical to run the `save` command
-from a configuration shell context.
-
-This stores the current committed configuration to the startup config. Running `commit` writes the
-current config to memory, while running `save` writes it to the startup.
-
-```bash
-# save
-```
-
-Similarly, you can specify a paramater on where to save the file, if you don't want to store to the 
-startup config. This can also be used for backups of the current running config.
-
-```bash
-# save /local/file/path/config.conf
-# save scp://user@remote.host/path/to/file.config
-# save ftp://user@remote.host/path/to/file.config
-# save tftp://remote.host/router.config
-```
-
-TODO: make this a link
-https://wiki.vyos.net/wiki/Save_(command)
 
 ## Setup DNS forwarder
 
