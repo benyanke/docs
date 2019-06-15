@@ -1,4 +1,5 @@
-baseURL = "https://docs.yanke.io"
+# baseURL = "https://docs.yanke.io/"
+baseURL = "file:////home/benyanke/git/docs/public/"
 languageCode = "en-us"
 
 title = "Sysadmin Docs"
