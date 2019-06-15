@@ -1,0 +1,5 @@
+baseURL = "https://docs.yanke.io"
+languageCode = "en-us"
+
+title = "Sysadmin Docs"
+theme = "blackburn"
