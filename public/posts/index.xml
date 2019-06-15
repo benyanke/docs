@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sysadmin Docs</title>
-    <link>file:////home/benyanke/git/docs/public/</link>
-    <description>Recent content on Sysadmin Docs</description>
+    <title>Posts on Sysadmin Docs</title>
+    <link>file:////home/benyanke/git/docs/public/posts/</link>
+    <description>Recent content in Posts on Sysadmin Docs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 14 Jun 2019 23:15:49 -0400</lastBuildDate>
     
-	<atom:link href="file:////home/benyanke/git/docs/public/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="file:////home/benyanke/git/docs/public/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

@@ -1,6 +1,109 @@
-# baseURL = "https://docs.yanke.io/"
-baseURL = "file:////home/benyanke/git/docs/public/"
+baseURL = "https://docs.yanke.io/"
 languageCode = "en-us"
 
 title = "Sysadmin Docs"
 theme = "blackburn"
+
+
+author = "Ben Yanke"
+# Shown in the side menu
+copyright = "&copy; 2019. All rights reserved."
+canonifyurls = true
+paginate = 10
+
+[indexes]
+  tag = "tags"
+  topic = "topics"
+
+[params]
+  # Shown in the home page
+  subtitle = "A Hugo Theme"
+  brand = "Blackburn"
+  googleAnalytics = "Your Google Analytics tracking ID"
+  disqus = "Your Disqus shortname"
+  # CSS name for highlight.js
+  highlightjs = "androidstudio"
+  highlightjs_extra_languages = ["yaml"]
+  dateFormat = "02 Jan 2006, 15:04"
+  # Include any custom CSS and/or JS files
+  # (relative to /static folder)
+  #custom_css = ["css/my.css"]
+  #custom_js = ["js/my.js"]
+
+  #[params.piwikAnalytics]
+  #  siteid = 2
+  #  piwikroot = "//analytics.example.com/"
+
+[menu]
+  # Shown in the side menu.
+  [[menu.main]]
+    name = "Home"
+    pre = "<i class='fa fa-home fa-fw'></i>"
+    weight = 1
+    identifier = "home"
+    url = "/"
+  [[menu.main]]
+    name = "Posts"
+    pre = "<i class='fa fa-list fa-fw'></i>"
+    weight = 2
+    identifier = "post"
+    url = "/post/"
+  [[menu.main]]
+    name = "About"
+    pre = "<i class='fa fa-user fa-fw'></i>"
+    weight = 3
+    identifier = "about"
+    url = "/about/"
+  [[menu.main]]
+    name = "Contact"
+    pre = "<i class='fa fa-phone fa-fw'></i>"
+    weight = 4
+    url = "/contact/"
+
+[social]
+  # Link your social networking accounts to the side menu
+  # by entering your username or ID.
+
+  # SNS microblogging
+  #twitter = "*"
+  #gnusocial = "*" # Specify href (e.g. https://quitter.se/yourusername)
+  #facebook = "*"
+  #googleplus = "*"
+  #weibo = "*"
+  #tumblr = "*"
+
+  # SNS photo/video sharing
+  #instagram = "*"
+  #flickr = "*"
+  #photo500px = "*"
+  #pinterest = "*"
+  #youtube = "*"
+  #vimeo = "*"
+  #vine = "*"
+  #slideshare = "*"
+
+  # SNS career oriented
+  linkedin = "*"
+  #xing = "*"
+
+  # SNS news
+  #reddit = "*"
+  #hackernews = "*"
+
+  # Techie
+  github = "benyanke"
+  #gitlab = "*"
+  #bitbucket = "*"
+  #stackoverflow = "*"
+  #serverfault = "*"
+
+  # Gaming
+  #steam = "*"
+  #mobygames = "*"
+
+  # Music
+  #lastfm = "*"
+  #discogs = "*"
+
+  # Other
+  keybase = "benyanke"
