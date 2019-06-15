@@ -153,11 +153,11 @@ To specify a key for a user, use command `loadkey [user] [keypath]`.
 
 Possible protocols for keypath include:
 
- - Direct path on filesystem
- - scp://<user>@<host>/<file>
- - http://<host>/<file>
- - scp://<user>@<host>/<file>
- - tftp://<host>/<file>
+ - `/path/to/file` (Path on local router filesystem)
+ - `scp://<user>@<host>/<file>`
+ - `http://<host>/<file>`
+ - `scp://<user>@<host>/<file>`
+ - `tftp://<host>/<file>`
 
 For example, load a key from a public URL using the command below.
 
