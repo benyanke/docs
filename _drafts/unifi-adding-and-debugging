@@ -1,0 +1,28 @@
+## Adoption commands
+
+```
+default creds: ubnt@ip
+pw: ubnt
+
+# Reset to factory settings
+sudo syswrapper.sh restore-default
+
+# Will reboot now
+
+# NOTE: WHEN RUNNING CONTROLLER BEHIND TLS PROXY:
+
+# Login again, and run (probably twice)
+set-inform https://controller.example.com/inform
+# OR on older APs:
+set-inform https://controller.example.com:443/inform
+
+By default, it uses http on port 8080, which will work as well.
+set-inform http://controller.example.com:8080/inform
+
+Alternatively, if you are listening on 8080, you can setup DNS record "unifi" to point to the controller.
+
+# After adopting in the controller, it may go offline
+
+# When it comes back, you may need to run set-inform again if it doesn't work. It will not be available
+```
+
