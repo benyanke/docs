@@ -90,3 +90,58 @@ Run the sysprep command on the vmname in virsh
 ```bash
 virt-sysprep -d vmname
 ```
+
+
+## Method 2
+
+Run a normal install. Reboot, make whatever changes are required.
+
+
+Then, shut down, make a clone to sysprep.
+
+
+Then, find the VM name, and run `virt-sysprep` on it. You can find VM 
+names with `virsh list --all` if you're not sure.
+
+
+Run a dry run to see what commands will run. This will run the full process
+but throw away the changes at the end.
+
+```bash
+$ virt-sysprep --dry-run --domain vmname
+```
+
+
+If you are satisfied, run without `--dry-run`:
+
+```bash
+$ virt-sysprep --domain vmname
+```
+
+Additioally, options like `--firstboot` or `--firstboot-command` can be used
+to insert startup scripts.
+
+These can be found here:
+http://libguestfs.org/virt-sysprep.1.html
+
+TODO : get a `--firstboot` option working
+
+
+Untested example:
+
+```bash
+$ sudo virt-sysprep --domain ubuntu-apache-base --firstboot-command 'apt update && apt install -y apache2 && reboot' --hostname 'baseos1'
+```
+
+However, if you're just installing packages, you can do that at buildtime instad of boot 
+time, with a command like this:
+
+The `--install` command  installs the package into the vm image, and `--network` enables the 
+networking to do so at build time.
+
+```bash
+sudo virt-sysprep --domain ubuntu-apache-base --install apache2 --network --firstboot-command 'apt update && apt dist-upgrade -y && apt autoremove -y && reboot' --hostname 'ubuntu-apache-base'
+```
+
+
+For all the available options, see the [official documentation page](http://libguestfs.org/virt-sysprep.1.html).
