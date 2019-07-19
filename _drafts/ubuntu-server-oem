@@ -145,3 +145,8 @@ sudo virt-sysprep --domain ubuntu-apache-base --install apache2 --network --firs
 
 
 For all the available options, see the [official documentation page](http://libguestfs.org/virt-sysprep.1.html).
+
+
+# Oneliner example to create a cluster
+
+for f in {00..05} ; do sudo virsh destroy rancher$f ; sudo virsh undefine rancher$f; sudo virt-clone --original=ubuntu-base --name=rancher$f --auto-clone ; sudo virt-sysprep --domain rancher$f --firstboot-command 'while true ; do apt update && break ; sleep 1; done ; dpkg --configure -a && apt update ; apt install curl -y; curl https://get.docker.com | bash ;  dpkg --configure -a && apt update && apt dist-upgrade -y &&  apt autoremove -y && reboot  ; echo test' --hostname "rancher$f"; sudo virsh start rancher$f;   done
