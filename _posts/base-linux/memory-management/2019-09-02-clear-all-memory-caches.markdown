@@ -3,7 +3,7 @@ layout: post
 title:  "Edit a VM's XML Configuration with Virsh"
 slug:   linux-clear-memory-caches
 date:   2019-09-02 22:04:10
-categories: base-linux/memory-management
+categories: Linux - Memory Management
 tags: 
  - linux
  - ram
