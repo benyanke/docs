@@ -10,4 +10,8 @@ default login is admin, no password.
 
 This will grant telnet to device.
 
+First change hostname for clarity:
 
+/system identity set name=HOSTNAME
+
+Then switch to CAPs mode.
