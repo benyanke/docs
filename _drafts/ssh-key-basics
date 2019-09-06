@@ -179,7 +179,11 @@ and output an SSH2 format public key.
 
 ```
 ssh-keygen -e -f KEY-FILE-IN > KEY-FILE-OUT
+
 ```
+
+
+### [convert OpenSSH private to putty private]
 
 
 
@@ -189,3 +193,4 @@ https://burnz.wordpress.com/2007/12/14/ssh-convert-openssh-to-ssh2-and-vise-vers
 https://www.oreilly.com/library/view/linux-security-cookbook/0596003919/ch06s05.html
 
 https://unix.stackexchange.com/questions/84060/convert-openssh-private-key-into-ssh2-private-key
+ 
