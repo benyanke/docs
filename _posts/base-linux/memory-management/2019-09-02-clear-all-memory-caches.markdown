@@ -37,4 +37,6 @@ Once you are root, run the following commands:
 ```
 
 This may take 10-15 seconds, but once you're done, you'll notice your memory usage is likely lower. You can now start
-your large memory process, and continue with your day!
+your large memory process, and continue with your day! Note that this will clear all your caches, and require any
+file reads to go back to disk instead of being cached, so run this knowing that it's likely to slow down your system
+for a short time. As such, only use this when required.
