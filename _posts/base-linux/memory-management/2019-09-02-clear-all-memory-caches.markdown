@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Edit a VM's XML Configuration with Virsh"
+title:  "Clear all Caches from RAM in Linux"
 slug:   linux-clear-memory-caches
 date:   2019-09-02 22:04:10
 categories: Linux - Memory Management
