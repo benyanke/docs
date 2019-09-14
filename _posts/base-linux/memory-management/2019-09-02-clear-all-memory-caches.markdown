@@ -3,7 +3,7 @@ layout: post
 title:  "Clear all Caches from RAM in Linux"
 slug:   linux-clear-memory-caches
 date:   2019-09-02 22:04:10
-categories: Linux - Memory Management
+categories: Linux memory-management
 tags: 
  - linux
  - ram
