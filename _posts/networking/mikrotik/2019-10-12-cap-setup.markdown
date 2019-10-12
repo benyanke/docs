@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "Mikrotik cAP Setup Guide"
+slug:   cap-setup-guide
+date:   2019-10-12 08:47:21
+categories: Networking
+tags: 
+ - mikrotik
+ - cap
+ - wifi
+ - access-point
+draft: true
+---
+
+On the ap:
+
+Connect to main network
+
+on another device, run:
+
+/tool mac-telnet [new device mac]
+
+default login is admin, no password.
+
+This will grant telnet to device.
+
+First change hostname for clarity:
+
+/system identity set name=HOSTNAME
+
+Then switch to CAPs mode.
+
+
+
+
+
+
+guides:
+
+capsman
+ - https://www.ispsupplies.com/blog/mikrotik-wireless-capsman-howto
+ - 
+
+
+
