@@ -24,7 +24,7 @@ and after you check your DHCP server to check it's address, log into the device 
 
 ## Initial Configuration
 
-[add link to routeros config]
+[add link to routeros initial config setup guide]
 
 ## Wireless Setup
 
