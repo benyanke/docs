@@ -10,7 +10,7 @@ tags:
  - cap-ac
  - wifi
  - access-point
-# draft: true
+draft: true
 ---
 
 Power device
