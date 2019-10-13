@@ -10,15 +10,35 @@ tags:
  - cap-ac
  - wifi
  - access-point
-draft: true
+# draft: true
 ---
 
 Power device
 
-Connect the access point to the POE injector. Connect the `power+data` end to the AP, and the `data` end directly to your computer. The access point has a static IP:
-192.168.88.1. Give the computer a static IP in the 192.168.88.0/24 subnet, and connect to the access point in the browser `http://192.168.88.1`.
 
-TODO : document the reset button hold instructions
+## Basic Startup
+Connect the access point to the POE injector. Connect the `power+data` end to the AP. Connect the `data` end to your existing network. It will get a DHCP address,
+and after you check your DHCP server to check it's address, log into the device using it's IP in the browser. For example: http://192.168.1.24.
+
+## Initial Configuration
+
+Even if you are using Ansible, you will need to set the basic configuration to allow Ansible to take over. Open the terminal in the web interface:
+
+[![Annotation of how to find terminal in web interface](2019-10-12-cap-ac-setup/1.png)](2019-10-12-cap-ac-setup/1.png)
+
+First, set a hostname:
+
+```bash
+[admin@MikroTik] > /system identity set name=cap01
+```
+
+Then setup your SSH keys:
+```bash
+
+```
+
+
+TODO : document the reset button hold instructions.
 
 computer
 will receive a DHCP address from the `cAP ac`.
