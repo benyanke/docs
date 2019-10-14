@@ -2,14 +2,13 @@
 layout: post
 title:  "Mikrotik RouterOS Initial Configuration"
 slug:   routeros-initial-configuration
-date:   2019-10-12 08:47:21
+date:   2019-10-10 08:47:21
 categories: Networking/mikrotik
 tags: 
  - mikrotik
  - routeros
  - ansible
  - configuration-management
-draft: true
 ---
 
 ## Basic Startup
@@ -24,7 +23,8 @@ However, whether or not you are using configuration management or not, this guid
 To begin setup, login to the device via it's web interface. By default, the username is `admin` and password is blank. Open the terminal in the web 
 interface using the button on the top right corner:
 
-[![Annotation of how to find terminal in web interface](2019-10-12-cap-ac-setup/1.png)](2019-10-12-cap-ac-setup/1.png)
+![Annotation of how to find terminal in web interface](/assets/2019/10/routeros-initial-configuration-001.png)
+
 
 ### Set a hostname
 
@@ -50,9 +50,10 @@ In this example 'cap01' is the hostname we're selecting.
 
 To setup keys, first upload the key file in the web interface. On the left side, select 'Files'.
 
-[img: 2.png]
 
-[img: 3.png]
+![Key Upload](/assets/2019/10/routeros-initial-configuration-002.png)
+
+![Key Upload](/assets/2019/10/routeros-initial-configuration-003.png)
 
 Then, use the browse button to select your key file. Your key file should be a text file with one line, with the
 key formatted in the authorized_keys format. That is, looking like this:
@@ -61,7 +62,7 @@ key formatted in the authorized_keys format. That is, looking like this:
 ssh-rsa AAAAB3Nc5v[...]B5nP/KnVKJP1fXQp jdoe@example.com
 ```
 
-[img: 4.png]
+![Key Upload](/assets/2019/10/routeros-initial-configuration-004.png)
 
 Once the file is uploaded (in our case, `by.pub`), drop back to the console to configure.
 
