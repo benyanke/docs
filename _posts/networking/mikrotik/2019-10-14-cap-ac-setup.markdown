@@ -2,7 +2,7 @@
 layout: post
 title:  "Mikrotik cAP ac Setup Guide"
 slug:   cap-setup-guide
-date:   2019-10-12 08:47:21
+date:   2019-10-14 08:47:21
 categories: Networking
 tags: 
  - mikrotik
