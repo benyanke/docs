@@ -100,7 +100,7 @@ second command will, if an update is available, reboot the device.
 
 ### Backup Config
 
-Finally, this step is optional, but it's reccomended that before you run a tool like ansible, save the configuration so that
+Finally, this step is optional, but it's recommended that before you run a tool like ansible, save the configuration so that
 you can easily rollback to a clean state for a reapplication of configuration management, without needing to redo the manual
 setup steps.
 
