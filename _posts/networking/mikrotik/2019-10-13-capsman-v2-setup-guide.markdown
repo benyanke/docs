@@ -66,8 +66,9 @@ to use to look for the server (typically the trunk back to your main network).
 
 TODO : Add a way to check here on the status
 
-TODO : document multi SSID features
+TODO : document multi SSID features and vlan
 
+TODO : document trunking? not sure if needed
 
 server setup guide:
 https://wiki.mikrotik.com/wiki/Manual:Simple_CAPsMAN_setup
