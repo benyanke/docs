@@ -27,8 +27,11 @@ We'll begin by setting up the CAPsMAN configuration set for your first wifi netw
 of `password`. Replace `bridge` with the name of your bridge. Note: on a default Mikrotik router config, the bridge is simply 
 named `bridge`, so you may not need to change this.
 
+Note: `united states3` refers to the third iteration of the `united states` standard. If the frequency range is ever adjusted
+in the future by the FCC, `united states4` will then be created, and the next change will be `united states5`, etc.
+
 ```bash
-[admin@yourdevice] > /caps-man configuration add name=config-net1 ssid=net1 country="united states3" datapath.bridge=bridge security.authentication-types=wpa2-psk security.passphrase=password
+[admin@yourdevice] > /caps-man configuration add name=config-net1 ssid=net1 country="united states3" datapath.bridge=bridge security.authentication-types=wpa-psk,wpa2-psk security.passphrase=password
 ```
 
 Now we indicate to CAPsMAN that we should use the created configuration. Change the `master-configuration` key to match the named configuration above.
@@ -38,7 +41,8 @@ Now we indicate to CAPsMAN that we should use the created configuration. Change 
 ```
 
 Then, specify which interface are allowed to accept CAPs. This is generally going to be your internal LAN master interface, and disallowing the 
-WAN interface. The second line then disallows all interfaces, to effectively turn it from a blacklist into a whitelist. Now, only 
+WAN interface. The second line then disallows all interfaces, to effectively turn it from a blacklist into a whitelist. Now, CAP requests will only
+be served on the LAN.
 
 ```bash
 [admin@yourdevice] > /caps-man manager interface add comment="Allow CAPs From internal Lan" disabled=no forbid=no interface=bridge
