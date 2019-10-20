@@ -14,8 +14,7 @@ tags:
 draft: true
 ---
 
-Power device
-
+Note: this is no longer needed, it's covered by the capsman guide
 
 ## Basic Startup
 Connect the access point to the POE injector. Connect the `power+data` end to the AP. Connect the `data` end to your existing network. It will get a DHCP address,
