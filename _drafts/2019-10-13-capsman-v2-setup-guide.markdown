@@ -50,14 +50,30 @@ Note: `united states3` refers to the third iteration of the `united states` stan
 in the future by the FCC, `united states4` will then be created, and the next change will be `united states5`, etc.
 
 ```bash
-[admin@yourdevice] > /caps-man configuration add name=config-net1-5g mode=ap ssid=net1-5g country="united states3" datapath=secure security=secure security.passphrase=password channel=5g comment="ssid: net1-5g | pw: [password]"
-[admin@yourdevice] > /caps-man configuration add name=config-net1-2g mode=ap ssid=net1-2g country="united states3" datapath=secure security=secure security.passphrase=password channel=2g comment="ssid: net1-2g | pw: [password]"
+[admin@yourdevice] > /caps-man configuration add name=config-net1-5g mode=ap ssid=net1-5g country="united states3" datapath=secure security=secure security.passphrase=password channel=5g channel.band=5ghz-a/n/ac comment="ssid: net1-5g | pw: [password]" datapath.bridge=bridge
+[admin@yourdevice] > /caps-man configuration add name=config-net1-2g mode=ap ssid=net1-2g country="united states3" datapath=secure security=secure security.passphrase=password channel=2g channel.band=2ghz-b/g/n comment="ssid: net1-2g | pw: [password]"
+
+BARELY WORKING:
+/caps-man configuration add name="config-net1-2g" mode=ap ssid="net1-2g" hide-ssid=no country="united states3" datapath.client-to-client-forwarding=yes datapath.bridge=bridge datapath.local-forwarding=yes channel.band=2ghz-b/g/n
+
+ANOTHER TEST:
+/caps-man configuration add name=config-net1-2g mode=ap ssid=net1-2g country="united states3" datapath.bridge=bridge channel.band=5ghz-a/n/ac comment=test datapath.client-to-client-forwarding=yes datapath.local-forwarding=yes
+
+
+
+==========
+
+WORKING 
+/caps-man configuration add name="config-net1-2g" ssid="testssid" country="united states3" security.authentication-types=wpa-psk,wpa2-psk security.passphrase="123456789" datapath.client-to-client-forwarding=yes datapath.bridge=bridge datapath.local-forwarding=yes channel=2g
+/caps-man configuration add name="config-net1-5g" ssid="testssid" country="united states3" security.authentication-types=wpa-psk,wpa2-psk security.passphrase="123456789" datapath.client-to-client-forwarding=yes datapath.bridge=bridge datapath.local-forwarding=yes channel=5g
+
 ```
 
 Now we indicate to CAPsMAN that we should use the created configuration. Change the `master-configuration` key to match the named configuration above.
 
 ```bash
-[admin@yourdevice] > /caps-man provisioning add action=create-dynamic-enabled master-configuration=config-net1
+[admin@yourdevice] > /caps-man provisioning add action=create-dynamic-enabled master-configuration=config-net1-2g name-format=identity comment="Main 2g provisioning profile"
+[admin@yourdevice] > /caps-man provisioning add action=create-dynamic-enabled master-configuration=config-net1-5g name-format=identity comment="Main 5g provisioning profile"
 ```
 
 Then, specify which interface are allowed to accept CAPs. This is generally going to be your internal LAN master interface, and disallowing the 
@@ -96,3 +112,37 @@ TODO : document trunking? not sure if needed
 
 server setup guide:
 https://wiki.mikrotik.com/wiki/Manual:Simple_CAPsMAN_setup
+
+
+
+
+TODO : Document helpful pieces and tips;
+https://wiki.mikrotik.com/wiki/Manual:CAPsMAN_tips
+     
+
+Limit clients with low signal strength in the access list
+
+Clients with low signal strength can bring wireless performance down for all clients. If you have good coverage of access points, you can use the access list to prevent clients with low signal strengths from connecting.
+
+Access list rules are evaluated in list order from the top until a suitable rule is met. For the client to be dropped by access list when it leaves the access point's zone, the client must be accepted by access list rule with signal strength. First, add a rule that accepts clients with good signal strength, then add a rule that rejects other clients.
+
+/caps-man access-list
+add action=accept signal-range=-70..120
+add action=reject
+
+Decrease TX power
+
+In order to motivate clients to connect to the closest controlled access point (CAP), it is advised to decrease TX power. This will encourage wireless clients (phones, laptops, etc.) to connect to the closest CAP with the strongest signal. This can result in better wireless performance. It is possible to change TX power for Channel configuration, Configuration profile or for CAP Interface.
+
+Do one of following:
+
+/caps-man channel set 0 tx-power=10
+/caps-man configuration set 0 channel.tx-power=10
+/caps-man interface set 0 channel.tx-power=10
+
+
+
+NOTE: When changing provisioning rules, you must reprovision.
+
+Reprovision command - loops through each remote cap, and runs command `/caps-man remote-cap provision` on it
+:foreach c in [/caps-man remote-cap find] do={ /caps-man remote-cap provision numbers=$c ; :delay 10s};
