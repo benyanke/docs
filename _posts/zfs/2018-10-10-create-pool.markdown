@@ -369,8 +369,23 @@ This creates datasets for VM install images, VM disks, and the home directories.
 After creating your datasets, look again using the tools listed above (`df -h`, `zfs 
 list`, etc), and you'll see your datasets listed there.
 
+
+## Mount After Reboot
+
+Important! By default, ZFS does not mount it's pools on boot. This must be handled using
+a tool or another method.
+
+Using ZFS-on-linux, the easiest way to do this is typically the service `zfs-import-scan`.
+
+Before you reboot, start the service to ensure the pool mounts on boot.
+
+```
+sudo service zfs-import-scan start
+```
+
 {% comment %}
 
+TODO: RESEARCH MORE INTO MOUNT ON BOOT OPTIONS
 TODO: ADD MORE DETAILS HERE ABOUT HOW DATASETS LOOK LIKE NORMAL SUBDIRS BUT AREN'T
 TODO: ADD MORE DETAILS HERE ABOUT DATASET NAMES VS MOUNT PATHS
 
