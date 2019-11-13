@@ -45,7 +45,7 @@ more file systems (datasets) or block devices (volumes). These datasets and volu
 share the pool of remaining free space. Each pool is uniquely identified by a name and a 
 GUID. The features available are determined by the ZFS version number on the pool.
 
-TODO: document pool upgrade procedures
+{% TODO: document pool upgrade procedures %}
 
 ### Vdev
 A pool consists of one or more striped vdevs. To use standard raid terminology, a pool 
@@ -115,7 +115,7 @@ fail.
 However, a disk vdev can be upgraded to a mirror by attaching a second disk of equal or 
 larger size.
 
-TODO: document the command to upgrade a disk to a mirror.
+{% TODO: document the command to upgrade a disk to a mirror. %}
 
 **File** - not suitable for production
 
@@ -150,6 +150,8 @@ faster than any cache device.
 
 ### Others
 
+{%
+
 TODO: Document the following concepts:
  * pool - done
  * vdev - done
@@ -167,7 +169,7 @@ TODO: Document the following concepts:
  * Special devices
    * ZIL
    * L2ARC
- 
+%} 
 
 ## RAID Card Note
 Ideally, RAID cards should be replaced with JBOD HBA devices, to allow the ZFS to have 
@@ -361,5 +363,9 @@ This creates datasets for VM install images, VM disks, and the home directories.
 After creating your datasets, look again using the tools listed above (`df -h`, `zfs 
 list`, etc), and you'll see your datasets listed there.
 
+{%
+
 TODO: ADD MORE DETAILS HERE ABOUT HOW DATASETS LOOK LIKE NORMAL SUBDIRS BUT AREN'T
 TODO: ADD MORE DETAILS HERE ABOUT DATASET NAMES VS MOUNT PATHS
+
+%}
