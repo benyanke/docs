@@ -391,4 +391,8 @@ TODO: ADD MORE DETAILS HERE ABOUT DATASET NAMES VS MOUNT PATHS
 
 
 ADD ZPOOL EXPORT GUID STEPS? Not sure where I saw them
+I THINK THIS IS IT
+$ sudo zpool export tank
+$ sudo zpool import -d /dev/disk/by-id -aN
+
 {% endcomment %}
