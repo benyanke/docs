@@ -9,3 +9,15 @@ sudo apt install icedtea-netx -y
 then:
 javaws [path to download]
 
+or, if you face cert issues, run:
+
+itweb-settings
+	
+Then in the control panel, open:
+
+"Extended applet security"
+and change to "low security"
+
+
+
+TODO : Finish this, still not working"
