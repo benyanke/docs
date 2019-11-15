@@ -1,0 +1,11 @@
+TLDR:
+
+get a jviewer.jnlp downloader?
+
+Just run it by:
+
+sudo apt install icedtea-netx -y
+
+then:
+javaws [path to download]
+
