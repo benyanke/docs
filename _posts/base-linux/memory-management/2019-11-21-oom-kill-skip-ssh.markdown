@@ -43,3 +43,10 @@ Place it in one of the files in `/etc/cron.d/`, like so:
 
 The first half ensures this only runs if the file exists, and the second half does the write.
 
+You can confirm it worked by running:
+
+```bash
+cat /proc/`cat /var/run/sshd.pid`/oom_adj
+```
+
+It should return code `-17`.
