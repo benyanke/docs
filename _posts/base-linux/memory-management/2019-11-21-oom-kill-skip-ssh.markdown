@@ -33,3 +33,13 @@ echo -17 > /proc/`cat /var/run/sshd.pid`/oom_adj
 
 Or alternatively, it can be scheduled in cron every few minutes, to ensure it's always up to date.
 
+
+Place it in one of the files in `/etc/cron.d/`, like so:
+
+```bash
+# Ensure SSH is never killed by disabling the OOM on the SSH process
+* * * * * root cat /var/run/sshd.pid &> /dev/null && echo -17 > /proc/`cat /var/run/sshd.pid`/oom_adj
+```
+
+The first half ensures this only runs if the file exists, and the second half does the write.
+
