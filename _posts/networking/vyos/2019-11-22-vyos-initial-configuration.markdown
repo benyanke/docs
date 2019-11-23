@@ -265,7 +265,7 @@ Replace the interface with your INSIDE interface.
 ```bash
 vyos@vyos# set service dns forwarding system
 vyos@vyos# set service dns forwarding listen-address '192.168.0.1'
-vyos@vyos# set service dns forwarding allow-from '192.168.0.1/24'
+vyos@vyos# set service dns forwarding allow-from '192.168.0.0/24'
 ```
 
 ## Switch Networks
