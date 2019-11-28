@@ -149,21 +149,12 @@ vyos@vyos# delete system login user vyos
 Passwords are insecure for SSH login - the best practice is to use SSH public/
 private key pairs.
 
-To specify a key for a user, use command `loadkey [user] [keypath]`.
-
-Possible protocols for keypath include:
-
- - `/path/to/file` (Path on local router filesystem)
- - `scp://<user>@<host>/<file>`
- - `http://<host>/<file>`
- - `scp://<user>@<host>/<file>`
- - `tftp://<host>/<file>`
-
-For example, load a key from a public URL using the command below.
-
+To specify a key for a user, use command below.
 ```
 [edit]
-vyos@vyos# loadkey jsmith https://example.com/users/jsmith/ssh/publickey
+vyos@vyos# set system login user [username] authentication public-keys '[key-name-string]' key "AAAAB3Nz...."
+vyos@vyos# set system login user [username] authentication public-keys '[key-name-string]' type ssh-rsa
+
 ```
 
 ## Interface Setup
@@ -238,20 +229,15 @@ vyos@vyos# set nat source rule 100 translation address masquerade
 
 VyOS can act as a DHCP server if you wish.
 
-Set the basic config for the DHCP clients:
+Set the basic config for the DHCP clients. `LAN` is an arbitrary string naming the DHCP instance.
 
 ```bash
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
-```
-
-Finally, set your IP range for DHCP to hand out IPs:
-
-```bash
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
-vyos@vyos# set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' authoritative
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' subnet 192.168.0.0/24 default-router 192.168.0.1
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' subnet 192.168.0.0/24 dns-server 192.168.0.1
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' subnet 192.168.0.0/24 lease 1800
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' subnet 192.168.0.0/24 range 0 start 192.168.0.100
+vyos@vyos# set service dhcp-server shared-network-name 'LAN' subnet 192.168.0.0/24 range 0 stop 192.168.0.200
 ```
 
 ## Setup DNS forwarder
