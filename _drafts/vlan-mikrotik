@@ -1,0 +1,29 @@
+To add a new vlan to a router, do the following tasks:
+ - setup sub interface
+ - setup ip local
+ - setup dhcp
+ - setup routing?
+
+
+
+Setup sub interface:
+/interface vlan add comment="VLAN414 - iot/restricted" interface=ether3-inside  vlan-id=414 name=vlan414
+
+ether3-inside is the name of the physical interface to bind to
+
+
+Next, add ip addresses
+/ip address 
+add address=10.10.20.1/24 interface=VLAN2
+add address=10.10.30.1/24 interface=VLAN3
+add address=10.10.40.1/24 interface=VLAN4
+
+
+
+Next, add dhcp server:
+make network
+/ip dhcp-server network add comment=vlan412 dns-server=10.52.52.1 gateway=10.52.52.1 netmask=24 address=10.52.52.0/24
+make pool
+/ip pool add comment=vlan412 name=vlan412 ranges=10.52.52.100-10.52.52.200
+make server
+/ip dhcp-server add name=vlan412-dhcp address-pool=vlan412 interface=vlan412 lease-time=600 src-address=10.52.52.10 authoritative=yes
