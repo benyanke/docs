@@ -26,4 +26,4 @@ make network
 make pool
 /ip pool add comment=vlan412 name=vlan412 ranges=10.52.52.100-10.52.52.200
 make server
-/ip dhcp-server add name=vlan412-dhcp address-pool=vlan412 interface=vlan412 lease-time=600 src-address=10.52.52.10 authoritative=yes
+/ip dhcp-server add name=vlan412-dhcp address-pool=vlan412 interface=vlan412 lease-time=4w src-address=10.52.52.10 authoritative=yes

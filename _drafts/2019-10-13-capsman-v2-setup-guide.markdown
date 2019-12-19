@@ -145,4 +145,5 @@ Do one of following:
 NOTE: When changing provisioning rules, you must reprovision.
 
 Reprovision command - loops through each remote cap, and runs command `/caps-man remote-cap provision` on it
+
 :foreach c in [/caps-man remote-cap find] do={ /caps-man remote-cap provision numbers=$c ; :delay 10s};
