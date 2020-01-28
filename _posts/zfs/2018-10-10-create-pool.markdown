@@ -383,6 +383,12 @@ Before you reboot, start the service to ensure the pool mounts on boot.
 sudo service zfs-import-scan start
 ```
 
+Or, you can import a pool manually:
+
+```
+sudo zpool import [poolname]
+```
+
 {% comment %}
 
 TODO: RESEARCH MORE INTO MOUNT ON BOOT OPTIONS
