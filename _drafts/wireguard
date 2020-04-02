@@ -8,13 +8,16 @@ Another to look at:
 https://mullvad.net/en/guides/category/wireguard/
 https://www.ericlight.com/wireguard-part-two-vpn-routing.html
 
-## Terms
+## Terminology
 
-TODO: Document these terms:
+In Wireguard, there are a number of terms to be aware of:
 
- * peer - every user is a peer, both clients and servers.
- * private/public key pair
+**peer**
+A peer is a host. It's that simple. Specifically, it's a host you're connecting to, or receiving a connection from.
 
+**AllowedIps**
+similar to routing/firewalling
+TODO : flesh this out
 
 ## Install
 
