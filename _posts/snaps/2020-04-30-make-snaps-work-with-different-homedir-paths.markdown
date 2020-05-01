@@ -34,7 +34,7 @@ Or, alternatively, you can run this one-liner to provide the correct configurati
 alternate homedir is in `/home/nethome/USER`:
 
 ```bash
-echo "@{HOMEDIRS}+=/home/nethome/" | sudo tee /etc/apparmor.d/tunables/home.d/alt-homedir
+$ echo "@{HOMEDIRS}+=/home/nethome/" | sudo tee /etc/apparmor.d/tunables/home.d/alt-homedir
 ```
 
 
