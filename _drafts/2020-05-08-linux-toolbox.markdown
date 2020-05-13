@@ -15,6 +15,8 @@ Below, you can find a categorized list of tools I use regularly, by category. Th
 ## To Categorize
  - xbindkeys - hotkey handler
  - kazam - screenshot tool
+ - audacity
+ - redshift
 
 ## Shell tools
  - pv - shell progress monitor
