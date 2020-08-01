@@ -1,0 +1,12 @@
+https://www.reddit.com/r/homelab/comments/6g5l2x/ipmi_without_java/dio3lpl/
+sudo apt-get install icedtea-plugin
+
+sudo apt install -y openjdk-8-jre icedtea-plugin
+
+javaws jviewer.jnlp
+java-web-start ~/Downloads/yourlauncher.jre
+
+
+sudo apt install icedtea-netx
+
+

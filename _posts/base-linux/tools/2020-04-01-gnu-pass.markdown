@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  "Start with Pass - Standard Unix Password Manager"
-slug:   start
-date:   2018-11-02 23:58:29
-categories: pass
+title:  "Getting Started with Pass - The Standard Unix Password Manager"
+slug:   pass
+date:   2020-04-01 23:58:29
+categories: Linux tools
 tags: 
  - passwords
  - security
@@ -15,7 +15,7 @@ tags:
 provides an interface to easily store and access files encrypted with 
 GPG, in a secure password vault.
 
-`pass` uses `gpg` (an implementation of the pgp encryption protocol) to 
+`pass` uses `gpg` (an implementation of the `pgp` encryption protocol) to 
 encrypt and decrypt your files, so you can access them with any tool 
 which decrypts with your GPG keys, not just the `pass` tool. You can sync 
 the password vault using any tool, or you can use git, which is 
@@ -27,9 +27,9 @@ There are several other tools you can use to manage your pass database:
     GUI management of the vault
   * [gopass](https://github.com/gopasspw/gopass) - a replacement for 
     `pass` with some additional features like search and coloring
-  * `gpg` - you can directly decrypt your password files using `gpg`, 
-    without any wrapper. This can be useful for building your own scripts 
-    or tooling.
+  * [gpg](https://gnupg.org/) - you can directly decrypt your password
+    files using `gpg`, without any wrapper. This can be useful for
+    building your own scripts or tooling.
 
 
 ## Setting up your GPG key
@@ -37,53 +37,43 @@ There are several other tools you can use to manage your pass database:
 First, you need to create your GPG key. You can skip this step if you 
 already have a GPG key you would like to use.
 
-First, generate your key:
-
 ```
 $ gpg --gen-key
 ```
 
-You will see a number of options. Generally, they are clear on 
-their own, but here are the options you should check that may not be clear:
+You will see a number of options. Generally, they are self
+explanatory, but ensure you use these options when asked.
 
-  * Select "DSA and RSA" key type
-  * Create a 4096 bit key
-  * Expiration - generally set to 0 (none) if you're not sure. Read 
-    more below.
+  * Select key type of "DSA and RSA" 
+  * Create a size 4096 bit key
+  * Expiration - if you're not sure, generally set to 0 (none). However,
+    you should read more about this below.
 
 You'll then enter your name, email, password, and allow the key to 
-generate. After you enter the password, it may take a while. Once 
-the entropy is generated, the key generation is complete. The 
-password must be secure, it is embedded in your key, used to 
-encrypt it.
+generate. After you enter the password, it may take a while as it
+collects randomness (entropy) from the system to generate a secure
+key. Once the entropy is generated, the key generation is complete.
+
+The password must be secure, it is embedded in your key, used to
+encrypt it. Anyone who obtains your private key file and your password
+can use this to impersonate you.
 
 Finally, export from `gpg` and import to `gpg2`, so that tools 
 which use gpg2 can also use the key.
 
 ```
-$ gpg --export-secret-keys > keyfile
-$ gpg2 --import keyfile;
-$ rm keyfile;
+$ gpg2 --import <(gpg --export-secret-keys)
 ```
 
 Finally, your key is stored in ~/.gnupg.
 
-
-TODO: Document pinetry options:
- - sudo nano ~/.gnupg/gpg-agent.conf
- - pinentry-program /usr/bin/pinentry-curses
-  - OR:
- - pinentry-program /usr/bin/pinentry-qt
-
-
-TODO: Document GPG expiration selection. 
-TLDR: if you don't know what you're doing, never expire.
-
-TODO: Document setting up GPG here
-
-TODO: Document gpg backups
-
-TODO: Document gpg security
+## GPG expiration
+GPG key expiration is a complex topic. I can't begin to cover all the angles on this
+topic, so I'd reccomend researching this on your own. Generally, it's good to set some
+expiration so that a compromized key can't be used forever. However, similarly, this
+requires action at expiration time. For starting out, a non expiring key is a safe
+default, but before you rely on this key for critical security, you should plan to grow
+a deeper understanding of this complex topic.
 
 ## Setting up `pass`
 
@@ -99,9 +89,8 @@ uid                  John Doe (Comment) <jdoe@example.com>
 ssb   4096R/12345678 2018-11-02
 ```
 
-Your key is identified by the email (in this case, 
-jdoe@example.com). Use this identifer to create your pass database, 
-adding the key identifier to the end of the command.
+Your key is identified by the email (in this case, jdoe@example.com). Use this identifer
+to create your pass database, adding the key identifier to the end of the command.
 
 ```
 $ pass init jdoe@example.com
@@ -130,7 +119,9 @@ Password Store
 │   │   ├── jdoe-gmail
 │   │   └── jdoe-hotmail
 │   └── work
-│       └── ceo-doecorp
+│       ├── doecorp-amazon-work-account
+│       ├── doecorp-domain-registrar
+│       └── doecorp-jdoe-domain-account
 └── financial
     └── banks
         ├── bank-of-america
@@ -151,7 +142,7 @@ Enter password for medical/hospital/billing:
 Retype password for medical/hospital/billing: 
 ```
 
-Type your password twice, and enter.
+Type your password twice when prompted, and enter.
 
 If you'd like to add more than a password, use the `edit` command documented below.
 
@@ -175,7 +166,9 @@ To view a password, just specify your path without any command.
 $ pass medical/hospital/billing
 MyReallyLongPassword
 
+username: jdoe
 email: jdoe@hotmail.com
+url: myclinic.com/billing
 
 Note: this account used for billing at downtown clinic,
 not the suburb clinic.
@@ -190,6 +183,9 @@ Copied medical/hospital/billing to clipboard. Will clear in 45 seconds.
 
 You can now use it from your clipboard.
 
+Pass entries are simply multi-line files, so you can store as much information as you'd like
+within the file. The only important part is to keep the password on the first line, as this is
+where `pass` looks for it when using the clipboard functionality.
 
 **Generate a Password**
 
@@ -231,3 +227,8 @@ Password Store
 $ pass medical/hospital/chart
 PB&<#t>oE1
 ```
+
+## Conclusion
+
+Here, `pass`, and it's underlying technology of `gpg` can provide you with a simple and secure
+way of storing your passwords with minimal overhead and maximum security.

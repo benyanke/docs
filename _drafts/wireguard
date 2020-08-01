@@ -8,13 +8,24 @@ Another to look at:
 https://mullvad.net/en/guides/category/wireguard/
 https://www.ericlight.com/wireguard-part-two-vpn-routing.html
 
-## Terms
 
-TODO: Document these terms:
+## Introduction and Terminology
 
- * peer - every user is a peer, both clients and servers.
- * private/public key pair
+Wireguard is a new modern VPN, built from the ground up to be fast and secure. Instead of having a massive codebases
+and old protocol options like legacy VPN solutions, wireguard provides a modern crypto suite as it's basis. Similarly,
+it's able to be configured with an ease similar to that of SSH, with little more than a hostname, port, and exchanged keys.
 
+In Wireguard, there are a number of terms to be aware of:
+
+**peer**
+
+A peer is a host. It's that simple. Specifically, it's a host you're connecting to, or receiving a connection from.
+
+**AllowedIps**
+
+AllowedIps specifies what subnets should be allowed through this interface. On the client side, it's the subnets that should
+be expected on the remote network. On the server side, it's the subnet (usually a single address /32) that is expected on the
+remote end.
 
 ## Install
 
@@ -30,7 +41,7 @@ You now have WireGuard installed. Run `which wg` to confirm that you have the `w
 commandline tool installed. It should return a path to a file. If it returns a path, it 
 is installed.
 
-## Setup
+## Key Generation
 
 First, generate keys on all peers (hosts), both the client and server. Every time this 
 is run, a new keypair is generated.
@@ -42,8 +53,7 @@ $ umask 077
 $ wg genkey > privatekey
 ```
 
-This will create an empty file, set to safe permissions (not readable by anyone else), 
-then generate the keypair for the host, and store the private key in the file.
+This will create a key file with set to safe permissions (not readable by anyone else).
 
 This file MUST be kept secure. 
 
@@ -70,16 +80,16 @@ oFdvW044aCWV8rPtPKAzudIW1GKws9oSUFTk4ydXuEc=
 
 This needs to be done for both the client and server. 
 
-## Shortcut
+## Key Generation Shortcut
 
-Now that you understand what's happening above, you can create the keys in a bash oneliner.
+Now that you understand what's happening above, you can create the keys in a bash oneliner. This handles all the steps documented
+above in the Key Generation section.
 
 Generate the server keys *on the server*:
 
 ```bash
 $ umask 077 && wg genkey | tee server_private_key | wg pubkey > server_public_key
 ```
-
 
 And do the same for client keys *on the client*:
 
@@ -94,10 +104,10 @@ Finally, transfer the public key of both the client and the server to each other
 
 We will create the setup with the following details. Adjust as required for your own use.
 
- * client subnet: 10.10.200.0/24
- * client subnet gateway: 10.10.200.1
+ * client subnet: 192.0.2.0/24
+ * client subnet gateway: 192.0.2.1
  * interface name: wg0
- * client ip: 10.10.200.10
+ * client ip: 192.0.2.10
 
 
 ## Create Server Configuration
@@ -117,9 +127,9 @@ other words, the range of IPs the client is allowed to use for themselves.
 
 ```
 [Interface]
-Address = 10.10.200.1/24
+Address = 192.0.2.1/24
 # TODO  - figure out why the heck this is needed. also see if down needs undo rules for cmd#3 and beyond
-PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o IFACE -j MASQUERADE; iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -i wg0 -o wg0 -m conntrack --ctstate NEW -j ACCEPT;iptables -t nat -A POSTROUTING -s 10.10.200.0/24 -o ens8 -j MASQUERADE;
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o IFACE -j MASQUERADE; iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; iptables -A FORWARD -i wg0 -o wg0 -m conntrack --ctstate NEW -j ACCEPT;iptables -t nat -A POSTROUTING -s 192.0.2.0/24 -o ens8 -j MASQUERADE;
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o IFACE -j MASQUERADE
 
 SaveConfig = false
@@ -132,12 +142,12 @@ ListenPort = 51820
 # Comment for first peer
 [Peer]
 PublicKey = <insert peer1 client_public_key>
-AllowedIPs = 10.10.200.10/32
+AllowedIPs = 192.0.2.10/32
 
 # Comment for second peer
 [Peer]
 PublicKey = <insert peer2 client_public_key>
-AllowedIPs = 10.10.200.11/32
+AllowedIPs = 192.0.2.11/32
 ```
 
 ## Install Resolvconf
@@ -167,7 +177,7 @@ to `0.0.0.0/0` routes all traffic, or you can route private lan traffic with a r
 
 ```
 [Interface]
-Address = 10.10.200.2/32
+Address = 192.0.2.2/32
 PrivateKey = <insert client_private_key>
 DNS = 10.200.200.1
 
@@ -193,7 +203,7 @@ You should recieve an output that looks like:
 ```
 [#] ip link add wg0 type wireguard
 [#] wg setconf wg0 /dev/fd/63
-[#] ip address add 10.10.200.1/24 dev wg0
+[#] ip address add 192.0.2.1/24 dev wg0
 [#] ip link set mtu 1420 up dev wg0
 ```
 

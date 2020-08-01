@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Mikrotik RouterOS Initial Configuration"
-slug:   routeros-initial-configuration
+title:  "Basic Mikrotik RouterOS Configuration"
+slug:   basic-routeros-configuration
 date:   2019-10-10 08:47:21
 categories: Networking/mikrotik
 tags: 
