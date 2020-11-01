@@ -34,7 +34,13 @@ guides:
 
 capsman
  - https://www.ispsupplies.com/blog/mikrotik-wireless-capsman-howto
- - 
+ - https://help.mikrotik.com/docs/display/UM/cAP+ac#heading-Resetbutton
 
 
+
+
+On CAP, to setup, go to "wireless" -> "cap" -> put in IP.
+
+If it's already there and not working, disable the cap mode, save, then reenable, and 
+save. It'll show up.
 
