@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "NAT Port Forwards with Iptables
+title:  "NAT Port Forwards with Iptables"
 slug:   nat-port-forward-with-iptables
 date:   2021-02-19 22:53:12
 categories: Networking
