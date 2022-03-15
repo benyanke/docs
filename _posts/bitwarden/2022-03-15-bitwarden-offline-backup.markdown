@@ -37,14 +37,14 @@ This JQ line allows us to export it in a smaller format to get more content in e
 
 
 ```shell
-
-echo "id\tname\turl\tusername\tpassword\tnote\t2FA totp token"> vault-passwords.txt
+printf 'id\tname\turl\tusername\tpassword\tnote\t2FA totp token'> vault-passwords.txt
 
 # handle typical login entries in a highly compressed way
 cat vault.json | jq -r '.items[] | select(.type == 1) | (.id + "\t" + .name + "\t" + .login.uris[0].uri + "\t" + .login.username + "\t" + .login.password + "\t" + .note + "\t" + .totp)' >> vault-passwords.txt
 
 # handle other types in a more generic way, removing unneeded fields
 cat vault.json | jq '.items[] | select(.type != 1) | del(.favorite, .reprompt, .folderId, .collectionIds, .type, .organizationId)' > vault-other.txt
+
 ```
 
 ## Output to QR Codes
