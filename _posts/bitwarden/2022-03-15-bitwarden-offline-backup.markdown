@@ -4,6 +4,7 @@ title:  "Offline Printable Bitwarden Backup"
 slug:   offline-bitwarden-backup
 date:   2022-03-15 10:53:11
 categories: backups
+draft: true
 tags: 
  - bitwarden
  - backups
